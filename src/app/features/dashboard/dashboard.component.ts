@@ -1,0 +1,245 @@
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
+import { NgpButton } from 'ng-primitives/button';
+import {
+  LucideAngularModule,
+  Coffee,
+  Spade,
+  Sun,
+  Moon,
+  Coins,
+  Timer,
+  LogOut,
+  BookOpen,
+} from 'lucide-angular';
+import { UserService } from '../../core/services/user.service';
+import { ThemeService } from '../../core/services/theme.service';
+
+type Section = 'pomodoro' | 'blackjack';
+
+@Component({
+  selector: 'app-dashboard',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [NgpButton, LucideAngularModule],
+  template: `
+    <div class="min-h-screen flex flex-col bg-violet-50 dark:bg-slate-950 transition-colors duration-300">
+
+      <!-- ── Header ──────────────────────────────────────────────────── -->
+      <header
+        class="sticky top-0 z-50 flex items-center gap-3 px-4 sm:px-6 py-3
+               bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl
+               border-b border-violet-100 dark:border-slate-800
+               shadow-sm shadow-violet-100/40 dark:shadow-slate-950/40"
+      >
+        <!-- Logo -->
+        <div class="flex items-center gap-2 mr-2">
+          <div class="flex items-center gap-1">
+            <div class="p-1.5 bg-violet-100 dark:bg-violet-900/50 rounded-xl">
+              <lucide-angular
+                [img]="Coffee"
+                [size]="16"
+                strokeWidth="2"
+                class="text-violet-500 dark:text-violet-300"
+              />
+            </div>
+            <div class="p-1.5 bg-pink-100 dark:bg-pink-900/50 rounded-xl">
+              <lucide-angular
+                [img]="Spade"
+                [size]="16"
+                strokeWidth="2"
+                class="text-pink-500 dark:text-pink-300"
+              />
+            </div>
+          </div>
+          <span class="text-base font-extrabold text-slate-800 dark:text-slate-100 tracking-tight hidden sm:block">
+            Pomo<span class="text-violet-500 dark:text-violet-300">Ludo</span>
+          </span>
+        </div>
+
+        <!-- Nav tabs -->
+        <nav class="flex flex-1 justify-center gap-1.5" aria-label="Secciones">
+          <button
+            ngpButton
+            (click)="activeSection.set('pomodoro')"
+            [attr.aria-current]="activeSection() === 'pomodoro' ? 'page' : null"
+            [class]="pomodoroTabClass()"
+          >
+            <lucide-angular [img]="Timer" [size]="15" strokeWidth="2" />
+            Pomodoro
+          </button>
+          <button
+            ngpButton
+            (click)="activeSection.set('blackjack')"
+            [attr.aria-current]="activeSection() === 'blackjack' ? 'page' : null"
+            [class]="blackjackTabClass()"
+          >
+            <lucide-angular [img]="Spade" [size]="15" strokeWidth="2" />
+            Blackjack
+          </button>
+        </nav>
+
+        <!-- Right side -->
+        <div class="flex items-center gap-2 ml-2">
+          <!-- Chips badge -->
+          <div
+            class="flex items-center gap-1 px-2.5 py-1.5 rounded-xl
+                   bg-amber-50 dark:bg-amber-900/30
+                   border border-amber-200 dark:border-amber-800/50"
+            title="Tus fichas"
+          >
+            <lucide-angular [img]="Coins" [size]="14" strokeWidth="2" class="text-amber-500" />
+            <span class="text-xs font-bold text-amber-600 dark:text-amber-400">
+              {{ userService.chips() }}
+            </span>
+          </div>
+
+          <!-- Username -->
+          <span
+            class="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl
+                   text-xs font-semibold text-slate-600 dark:text-slate-300
+                   bg-slate-100 dark:bg-slate-800"
+          >
+            <lucide-angular [img]="BookOpen" [size]="13" strokeWidth="2" class="text-violet-400" />
+            {{ userService.name() }}
+          </span>
+
+          <!-- Theme toggle -->
+          <button
+            ngpButton
+            (click)="themeService.toggle()"
+            aria-label="Cambiar tema"
+            class="p-2 rounded-xl cursor-pointer
+                   text-slate-500 dark:text-slate-400
+                   hover:bg-slate-100 dark:hover:bg-slate-800
+                   transition-all duration-200"
+          >
+            @if (themeService.isDark()) {
+              <lucide-angular [img]="Sun" [size]="16" strokeWidth="2" />
+            } @else {
+              <lucide-angular [img]="Moon" [size]="16" strokeWidth="2" />
+            }
+          </button>
+
+          <!-- Logout -->
+          <button
+            ngpButton
+            (click)="logout()"
+            aria-label="Cerrar sesión"
+            class="p-2 rounded-xl cursor-pointer
+                   text-slate-400 dark:text-slate-500
+                   hover:bg-red-50 dark:hover:bg-red-950/40
+                   hover:text-red-400 dark:hover:text-red-400
+                   transition-all duration-200"
+            title="Cerrar sesión"
+          >
+            <lucide-angular [img]="LogOut" [size]="16" strokeWidth="2" />
+          </button>
+        </div>
+      </header>
+
+      <!-- ── Main ─────────────────────────────────────────────────────── -->
+      <main class="flex-1 p-4 sm:p-8 flex flex-col items-center">
+
+        @if (activeSection() === 'pomodoro') {
+          <!-- Placeholder Pomodoro -->
+          <div
+            class="w-full max-w-md mt-10 flex flex-col items-center gap-6
+                   bg-white/70 dark:bg-slate-800/60 backdrop-blur-md
+                   border border-violet-100 dark:border-slate-700
+                   rounded-3xl p-10 shadow-xl shadow-violet-100/40 dark:shadow-slate-950/40
+                   text-center"
+          >
+            <div class="p-5 bg-violet-100 dark:bg-violet-900/40 rounded-2xl">
+              <lucide-angular [img]="Timer" [size]="48" strokeWidth="1.5" class="text-violet-400 dark:text-violet-300" />
+            </div>
+            <div>
+              <h2 class="text-2xl font-extrabold text-slate-800 dark:text-slate-100">Pomodoro</h2>
+              <p class="mt-2 text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+                El temporizador está en camino.<br />
+                Cada sesión completada te dará <strong class="text-violet-500">1 ficha</strong> para el Blackjack.
+              </p>
+            </div>
+            <div
+              class="px-4 py-2 rounded-full text-xs font-semibold
+                     bg-violet-100 dark:bg-violet-900/40 text-violet-600 dark:text-violet-300"
+            >
+              ¡Próximamente!
+            </div>
+          </div>
+        }
+
+        @if (activeSection() === 'blackjack') {
+          <!-- Placeholder Blackjack -->
+          <div
+            class="w-full max-w-md mt-10 flex flex-col items-center gap-6
+                   bg-white/70 dark:bg-slate-800/60 backdrop-blur-md
+                   border border-pink-100 dark:border-slate-700
+                   rounded-3xl p-10 shadow-xl shadow-pink-100/40 dark:shadow-slate-950/40
+                   text-center"
+          >
+            <div class="p-5 bg-pink-100 dark:bg-pink-900/40 rounded-2xl">
+              <lucide-angular [img]="Spade" [size]="48" strokeWidth="1.5" class="text-pink-400 dark:text-pink-300" />
+            </div>
+            <div>
+              <h2 class="text-2xl font-extrabold text-slate-800 dark:text-slate-100">Blackjack</h2>
+              <p class="mt-2 text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+                La mesa de cartas está siendo preparada.<br />
+                Necesitarás <strong class="text-pink-500">fichas</strong> para jugar — gánalas estudiando.
+              </p>
+            </div>
+            <div class="flex items-center gap-2 px-4 py-2 rounded-full
+                        bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800/40">
+              <lucide-angular [img]="Coins" [size]="14" strokeWidth="2" class="text-amber-500" />
+              <span class="text-xs font-bold text-amber-600 dark:text-amber-400">
+                Fichas disponibles: {{ userService.chips() }}
+              </span>
+            </div>
+            <div
+              class="px-4 py-2 rounded-full text-xs font-semibold
+                     bg-pink-100 dark:bg-pink-900/40 text-pink-600 dark:text-pink-300"
+            >
+              ¡Próximamente!
+            </div>
+          </div>
+        }
+
+      </main>
+    </div>
+  `,
+})
+export class DashboardComponent {
+  readonly userService = inject(UserService);
+  readonly themeService = inject(ThemeService);
+  private readonly router = inject(Router);
+
+  readonly activeSection = signal<Section>('pomodoro');
+
+  private readonly tabBase =
+    'flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 cursor-pointer';
+
+  readonly pomodoroTabClass = computed(() =>
+    this.activeSection() === 'pomodoro'
+      ? `${this.tabBase} bg-violet-500 text-white shadow-md shadow-violet-300/50`
+      : `${this.tabBase} text-slate-500 dark:text-slate-400 hover:bg-violet-50 dark:hover:bg-slate-800`,
+  );
+
+  readonly blackjackTabClass = computed(() =>
+    this.activeSection() === 'blackjack'
+      ? `${this.tabBase} bg-pink-500 text-white shadow-md shadow-pink-300/50`
+      : `${this.tabBase} text-slate-500 dark:text-slate-400 hover:bg-pink-50 dark:hover:bg-slate-800`,
+  );
+
+  readonly Coffee = Coffee;
+  readonly Spade = Spade;
+  readonly Sun = Sun;
+  readonly Moon = Moon;
+  readonly Coins = Coins;
+  readonly Timer = Timer;
+  readonly LogOut = LogOut;
+  readonly BookOpen = BookOpen;
+
+  logout(): void {
+    this.userService.logout();
+    this.router.navigate(['/login']);
+  }
+}

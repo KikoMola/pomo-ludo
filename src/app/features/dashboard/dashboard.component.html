@@ -8,7 +8,7 @@
            shadow-sm shadow-violet-100/40 dark:shadow-slate-950/40"
   >
     <!-- Logo: solo visible en sm+ -->
-    <div class="hidden sm:flex items-center gap-2 mr-2 shrink-0">
+    <div class="hidden sm:flex items-center gap-2">
       <div class="flex items-center gap-1">
         <div class="p-1.5 bg-violet-100 dark:bg-violet-900/50 rounded-xl">
           <lucide-angular
@@ -33,7 +33,7 @@
     </div>
 
     <!-- Nav tabs -->
-    <nav class="flex flex-1 justify-start sm:justify-center gap-1.5" aria-label="Secciones">
+    <nav class="flex justify-center gap-1.5" aria-label="Secciones">
       <button
         ngpButton
         (click)="activeSection.set('pomodoro')"
@@ -55,27 +55,27 @@
     </nav>
 
     <!-- Right side -->
-    <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+    <div class="flex-1 flex items-center justify-end gap-2">
       <!-- Chips badge -->
       <div
-        class="flex items-center gap-1 px-2 py-1.5 sm:px-2.5 rounded-xl
+        class="flex items-center gap-1.5 px-3 py-2 rounded-xl
                bg-amber-50 dark:bg-amber-900/30
                border border-amber-200 dark:border-amber-800/50"
         title="Tus fichas"
       >
-        <lucide-angular [img]="Coins" [size]="14" strokeWidth="2" class="text-amber-500" />
-        <span class="text-xs font-bold text-amber-600 dark:text-amber-400">
+        <lucide-angular [img]="Coins" [size]="16" strokeWidth="2" class="text-amber-500" />
+        <span class="text-sm font-bold text-amber-600 dark:text-amber-400">
           {{ userService.chips() }}
         </span>
       </div>
 
       <!-- Username -->
       <span
-        class="flex items-center gap-1.5 px-2 py-1.5 sm:px-2.5 rounded-xl
-               text-xs font-semibold text-slate-600 dark:text-slate-300
-               bg-slate-100 dark:bg-slate-800 max-w-20 sm:max-w-none truncate"
+        class="flex items-center gap-1.5 px-3 py-2 rounded-xl
+               text-sm font-semibold text-slate-600 dark:text-slate-300
+               bg-slate-100 dark:bg-slate-800 max-w-24 sm:max-w-none truncate"
       >
-        <lucide-angular [img]="BookOpen" [size]="15" strokeWidth="2" class="text-violet-400 shrink-0" />
+        <lucide-angular [img]="BookOpen" [size]="17" strokeWidth="2" class="text-violet-400 shrink-0" />
         <span class="truncate">{{ userService.name() }}</span>
       </span>
 
@@ -84,15 +84,15 @@
         ngpButton
         (click)="themeService.toggle()"
         aria-label="Cambiar tema"
-        class="p-2 rounded-xl cursor-pointer
+        class="p-2.5 rounded-xl cursor-pointer
                text-slate-500 dark:text-slate-400
                hover:bg-slate-100 dark:hover:bg-slate-800
                transition-all duration-200"
       >
         @if (themeService.isDark()) {
-          <lucide-angular [img]="Sun" [size]="18" strokeWidth="2" />
+          <lucide-angular [img]="Sun" [size]="20" strokeWidth="2" />
         } @else {
-          <lucide-angular [img]="Moon" [size]="18" strokeWidth="2" />
+          <lucide-angular [img]="Moon" [size]="20" strokeWidth="2" />
         }
       </button>
 
@@ -101,14 +101,14 @@
         ngpButton
         (click)="logout()"
         aria-label="Cerrar sesión"
-        class="p-2 rounded-xl cursor-pointer
+        class="p-2.5 rounded-xl cursor-pointer
                text-slate-400 dark:text-slate-500
                hover:bg-red-50 dark:hover:bg-red-950/40
                hover:text-red-400 dark:hover:text-red-400
                transition-all duration-200"
         title="Cerrar sesión"
       >
-        <lucide-angular [img]="LogOut" [size]="18" strokeWidth="2" />
+        <lucide-angular [img]="LogOut" [size]="20" strokeWidth="2" />
       </button>
     </div>
   </header>

@@ -31,7 +31,7 @@ export class DashboardComponent {
   readonly activeSection = signal<Section>('pomodoro');
 
   private readonly tabBase =
-    'flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 cursor-pointer';
+    'flex items-center gap-2 px-3 py-3 sm:px-4 sm:py-2 rounded-xl text-sm font-semibold transition-all duration-200 cursor-pointer';
 
   readonly pomodoroTabClass = computed(() =>
     this.activeSection() === 'pomodoro'

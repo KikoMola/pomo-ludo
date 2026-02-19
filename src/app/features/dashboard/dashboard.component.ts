@@ -31,18 +31,18 @@ export class DashboardComponent {
   readonly activeSection = signal<Section>('pomodoro');
 
   private readonly tabBase =
-    'flex items-center gap-2 px-3 py-3 sm:px-4 sm:py-2 rounded-xl text-sm font-semibold transition-all duration-200 cursor-pointer';
+    'flex items-center gap-2.5 px-4 py-2.5 sm:px-5 sm:py-3 rounded-2xl text-sm font-bold transition-all duration-300 cursor-pointer select-none';
 
   readonly pomodoroTabClass = computed(() =>
     this.activeSection() === 'pomodoro'
-      ? `${this.tabBase} bg-violet-500 text-white shadow-md shadow-violet-300/50`
-      : `${this.tabBase} text-slate-500 dark:text-slate-400 hover:bg-violet-50 dark:hover:bg-slate-800`,
+      ? `${this.tabBase} bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-200 ring-2 ring-orange-200 dark:ring-orange-800`
+      : `${this.tabBase} text-stone-500 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800 hover:text-orange-600 dark:hover:text-orange-300`,
   );
 
   readonly blackjackTabClass = computed(() =>
     this.activeSection() === 'blackjack'
-      ? `${this.tabBase} bg-pink-500 text-white shadow-md shadow-pink-300/50`
-      : `${this.tabBase} text-slate-500 dark:text-slate-400 hover:bg-pink-50 dark:hover:bg-slate-800`,
+      ? `${this.tabBase} bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-200 ring-2 ring-rose-200 dark:ring-rose-800`
+      : `${this.tabBase} text-stone-500 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800 hover:text-rose-600 dark:hover:text-rose-300`,
   );
 
   readonly Coffee = Coffee;

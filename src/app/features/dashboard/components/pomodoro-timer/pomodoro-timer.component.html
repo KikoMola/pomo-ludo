@@ -1,8 +1,8 @@
 <div
-  class="w-full max-w-sm flex flex-col items-center gap-6
+  class="w-full max-w-md flex flex-col items-center gap-6
          bg-white/60 dark:bg-stone-800/60 backdrop-blur-md
          border border-white/40 dark:border-stone-700
-         rounded-[2.5rem] p-8 sm:p-10
+         rounded-[2.5rem] p-8 sm:p-12
          shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-stone-950/40"
 >
 
@@ -79,31 +79,31 @@
     ></div>
 
     <svg
-      width="220"
-      height="220"
-      viewBox="0 0 220 220"
+      width="280"
+      height="280"
+      viewBox="0 0 280 280"
       class="relative -rotate-90"
       role="img"
       [attr.aria-label]="minutes() + ':' + seconds() + ' restantes en modo ' + modeLabel()"
     >
       <!-- Background track -->
       <circle
-        cx="110"
-        cy="110"
+        cx="140"
+        cy="140"
         [attr.r]="RING_RADIUS"
         fill="none"
-        stroke-width="12"
+        stroke-width="14"
         class="transition-colors duration-500"
         [class]="ringBgClass()"
         stroke="currentColor"
       />
       <!-- Progress arc -->
       <circle
-        cx="110"
-        cy="110"
+        cx="140"
+        cy="140"
         [attr.r]="RING_RADIUS"
         fill="none"
-        stroke-width="12"
+        stroke-width="14"
         stroke-linecap="round"
         [attr.stroke-dasharray]="CIRCUMFERENCE"
         [attr.stroke-dashoffset]="dashOffset()"
@@ -116,14 +116,12 @@
     <!-- Time display (centered over SVG) -->
     <div class="absolute flex flex-col items-center gap-1 rotate-0">
       <span
-        class="text-5xl font-black tabular-nums tracking-tight transition-colors duration-500"
-        [class.text-stone-800]="true"
-        [class.dark:text-stone-100]="true"
+        class="text-6xl font-black tabular-nums tracking-tight transition-colors duration-500 text-stone-800 dark:text-stone-100"
         [attr.aria-live]="'off'"
       >
         {{ minutes() }}:{{ seconds() }}
       </span>
-      <span class="text-xs font-semibold uppercase tracking-widest text-stone-400 dark:text-stone-500">
+      <span class="text-sm font-semibold uppercase tracking-widest text-stone-400 dark:text-stone-500">
         {{ modeLabel() }}
       </span>
     </div>

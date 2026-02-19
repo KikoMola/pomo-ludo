@@ -20,7 +20,7 @@ const DURATIONS: Record<PomodoroMode, number> = {
 };
 
 const SESSIONS_BEFORE_LONG_BREAK = 4;
-const RING_RADIUS = 90;
+const RING_RADIUS = 115;
 const CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS;
 
 @Component({

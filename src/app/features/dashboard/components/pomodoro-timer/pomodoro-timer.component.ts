@@ -63,17 +63,17 @@ export class PomodoroTimerComponent implements OnDestroy {
     return labels[this.mode()];
   });
 
-  readonly ringColorClass = computed(() =>
-    this.mode() === 'focus'
-      ? 'text-orange-400 dark:text-orange-500'
-      : 'text-emerald-400 dark:text-emerald-500',
-  );
+  readonly ringColorClass = computed(() => {
+    if (this.mode() === 'focus') return 'text-orange-400 dark:text-orange-500';
+    if (this.mode() === 'shortBreak') return 'text-emerald-400 dark:text-emerald-500';
+    return 'text-sky-400 dark:text-sky-500';
+  });
 
-  readonly ringBgClass = computed(() =>
-    this.mode() === 'focus'
-      ? 'text-orange-100 dark:text-orange-900/20'
-      : 'text-emerald-100 dark:text-emerald-900/20',
-  );
+  readonly ringBgClass = computed(() => {
+    if (this.mode() === 'focus') return 'text-orange-100 dark:text-orange-900/20';
+    if (this.mode() === 'shortBreak') return 'text-emerald-100 dark:text-emerald-900/20';
+    return 'text-sky-100 dark:text-sky-900/20';
+  });
 
   readonly sessionDots = computed(() =>
     Array.from({ length: SESSIONS_BEFORE_LONG_BREAK }, (_, i) => i < this.sessionsCompleted() % SESSIONS_BEFORE_LONG_BREAK || (this.sessionsCompleted() > 0 && this.sessionsCompleted() % SESSIONS_BEFORE_LONG_BREAK === 0)),

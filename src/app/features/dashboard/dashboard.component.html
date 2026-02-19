@@ -33,7 +33,7 @@
     </div>
 
     <!-- Nav tabs -->
-    <nav class="flex-1 flex justify-center gap-2" aria-label="Secciones">
+    <nav class="flex justify-start gap-2" aria-label="Secciones">
       <button
         ngpButton
         (click)="activeSection.set('pomodoro')"
@@ -72,21 +72,21 @@
         </span>
       </div>
 
-      <!-- Username: Oculto en móvil muy pequeño/ajustado -->
+      <!-- Username: Visible también en móvil -->
       <span
-        class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full shadow-sm
+        class="flex items-center gap-2 px-2 py-1.5 sm:px-3 rounded-full shadow-sm
                bg-white dark:bg-stone-800
                border border-stone-200 dark:border-stone-700
                text-sm font-bold text-stone-600 dark:text-stone-300
-               max-w-32 truncate select-none"
+               max-w-20 sm:max-w-32 truncate select-none"
       >
-        <div class="p-1 bg-orange-100 dark:bg-orange-900/50 rounded-full">
+        <div class="p-1 bg-orange-100 dark:bg-orange-900/50 rounded-full hidden xs:block">
             <lucide-angular [img]="BookOpen" [size]="14" strokeWidth="2.5" class="text-orange-500 dark:text-orange-300" />
         </div>
         <span class="truncate">{{ userService.name() }}</span>
       </span>
 
-      <div class="hidden sm:block h-6 w-px bg-stone-200 dark:bg-stone-800 mx-1"></div>
+      <div class="h-6 w-px bg-stone-200 dark:bg-stone-800 mx-1 hidden sm:block"></div>
 
       <!-- Theme toggle -->
       <button

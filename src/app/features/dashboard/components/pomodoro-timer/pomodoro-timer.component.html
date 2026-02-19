@@ -1,0 +1,208 @@
+<div
+  class="w-full max-w-sm flex flex-col items-center gap-6
+         bg-white/60 dark:bg-stone-800/60 backdrop-blur-md
+         border border-white/40 dark:border-stone-700
+         rounded-[2.5rem] p-8 sm:p-10
+         shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-stone-950/40"
+>
+
+  <!-- ── Mode tabs ─────────────────────────────────────────────── -->
+  <div
+    class="flex gap-1 p-1 rounded-2xl bg-stone-100 dark:bg-stone-900/60 border border-stone-200 dark:border-stone-700 w-full"
+    role="tablist"
+    aria-label="Modo del pomodoro"
+  >
+    <button
+      ngpButton
+      role="tab"
+      [attr.aria-selected]="mode() === 'focus'"
+      (click)="setMode('focus')"
+      class="flex-1 flex items-center justify-center gap-1.5 py-2 px-2 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer"
+      [class.bg-white]="mode() === 'focus'"
+      [class.dark:bg-stone-800]="mode() === 'focus'"
+      [class.text-orange-600]="mode() === 'focus'"
+      [class.dark:text-orange-300]="mode() === 'focus'"
+      [class.shadow-sm]="mode() === 'focus'"
+      [class.text-stone-500]="mode() !== 'focus'"
+      [class.dark:text-stone-400]="mode() !== 'focus'"
+    >
+      <lucide-angular [img]="Brain" [size]="13" strokeWidth="2.5" />
+      <span class="hidden xs:inline">Enfoque</span>
+    </button>
+
+    <button
+      ngpButton
+      role="tab"
+      [attr.aria-selected]="mode() === 'shortBreak'"
+      (click)="setMode('shortBreak')"
+      class="flex-1 flex items-center justify-center gap-1.5 py-2 px-2 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer"
+      [class.bg-white]="mode() === 'shortBreak'"
+      [class.dark:bg-stone-800]="mode() === 'shortBreak'"
+      [class.text-emerald-600]="mode() === 'shortBreak'"
+      [class.dark:text-emerald-300]="mode() === 'shortBreak'"
+      [class.shadow-sm]="mode() === 'shortBreak'"
+      [class.text-stone-500]="mode() !== 'shortBreak'"
+      [class.dark:text-stone-400]="mode() !== 'shortBreak'"
+    >
+      <lucide-angular [img]="Coffee" [size]="13" strokeWidth="2.5" />
+      <span class="hidden xs:inline">Corto</span>
+    </button>
+
+    <button
+      ngpButton
+      role="tab"
+      [attr.aria-selected]="mode() === 'longBreak'"
+      (click)="setMode('longBreak')"
+      class="flex-1 flex items-center justify-center gap-1.5 py-2 px-2 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer"
+      [class.bg-white]="mode() === 'longBreak'"
+      [class.dark:bg-stone-800]="mode() === 'longBreak'"
+      [class.text-emerald-600]="mode() === 'longBreak'"
+      [class.dark:text-emerald-300]="mode() === 'longBreak'"
+      [class.shadow-sm]="mode() === 'longBreak'"
+      [class.text-stone-500]="mode() !== 'longBreak'"
+      [class.dark:text-stone-400]="mode() !== 'longBreak'"
+    >
+      <lucide-angular [img]="Sofa" [size]="13" strokeWidth="2.5" />
+      <span class="hidden xs:inline">Largo</span>
+    </button>
+  </div>
+
+  <!-- ── Ring timer ─────────────────────────────────────────────── -->
+  <div class="relative flex items-center justify-center" aria-hidden="true">
+    <!-- Soft glow backdrop -->
+    <div
+      class="absolute inset-0 rounded-full blur-2xl opacity-30 transition-colors duration-500"
+      [class.bg-orange-300]="mode() === 'focus'"
+      [class.dark:bg-orange-600]="mode() === 'focus'"
+      [class.bg-emerald-300]="mode() !== 'focus'"
+      [class.dark:bg-emerald-600]="mode() !== 'focus'"
+    ></div>
+
+    <svg
+      width="220"
+      height="220"
+      viewBox="0 0 220 220"
+      class="relative -rotate-90"
+      role="img"
+      [attr.aria-label]="minutes() + ':' + seconds() + ' restantes en modo ' + modeLabel()"
+    >
+      <!-- Background track -->
+      <circle
+        cx="110"
+        cy="110"
+        [attr.r]="RING_RADIUS"
+        fill="none"
+        stroke-width="12"
+        class="transition-colors duration-500"
+        [class]="ringBgClass()"
+        stroke="currentColor"
+      />
+      <!-- Progress arc -->
+      <circle
+        cx="110"
+        cy="110"
+        [attr.r]="RING_RADIUS"
+        fill="none"
+        stroke-width="12"
+        stroke-linecap="round"
+        [attr.stroke-dasharray]="CIRCUMFERENCE"
+        [attr.stroke-dashoffset]="dashOffset()"
+        class="transition-all duration-1000 ease-linear"
+        [class]="ringColorClass()"
+        stroke="currentColor"
+      />
+    </svg>
+
+    <!-- Time display (centered over SVG) -->
+    <div class="absolute flex flex-col items-center gap-1 rotate-0">
+      <span
+        class="text-5xl font-black tabular-nums tracking-tight transition-colors duration-500"
+        [class.text-stone-800]="true"
+        [class.dark:text-stone-100]="true"
+        [attr.aria-live]="'off'"
+      >
+        {{ minutes() }}:{{ seconds() }}
+      </span>
+      <span class="text-xs font-semibold uppercase tracking-widest text-stone-400 dark:text-stone-500">
+        {{ modeLabel() }}
+      </span>
+    </div>
+  </div>
+
+  <!-- ── Session dots ───────────────────────────────────────────── -->
+  <div class="flex items-center gap-2.5" aria-label="Sesiones completadas en el ciclo actual">
+    @for (filled of sessionDots(); track $index) {
+      <div
+        class="w-2.5 h-2.5 rounded-full transition-all duration-300 border-2"
+        [class.bg-orange-400]="filled"
+        [class.dark:bg-orange-500]="filled"
+        [class.border-orange-400]="filled"
+        [class.dark:border-orange-500]="filled"
+        [class.bg-transparent]="!filled"
+        [class.border-stone-300]="!filled"
+        [class.dark:border-stone-600]="!filled"
+        [attr.aria-label]="'Sesión ' + ($index + 1) + (filled ? ' completada' : ' pendiente')"
+      ></div>
+    }
+    <span class="ml-1 text-xs text-stone-400 dark:text-stone-500 font-medium tabular-nums">
+      {{ sessionsCompleted() }}
+    </span>
+  </div>
+
+  <!-- ── Controls ───────────────────────────────────────────────── -->
+  <div class="flex items-center gap-4">
+    <!-- Reset -->
+    <button
+      ngpButton
+      (click)="reset()"
+      aria-label="Reiniciar temporizador"
+      class="p-3 rounded-2xl cursor-pointer transition-all duration-200 active:scale-90
+             text-stone-400 dark:text-stone-500
+             hover:bg-stone-100 dark:hover:bg-stone-700
+             hover:text-stone-600 dark:hover:text-stone-300"
+    >
+      <lucide-angular [img]="RotateCcw" [size]="20" strokeWidth="2.5" />
+    </button>
+
+    <!-- Play / Pause -->
+    <button
+      ngpButton
+      (click)="toggle()"
+      [attr.aria-label]="isRunning() ? 'Pausar temporizador' : 'Iniciar temporizador'"
+      class="flex items-center gap-2.5 px-8 py-3.5 rounded-2xl font-bold text-sm cursor-pointer text-white
+             transition-all duration-200 active:scale-95 shadow-md
+             focus-visible:ring-2 focus-visible:ring-offset-2"
+      [class.bg-orange-500]="mode() === 'focus'"
+      [class.hover:bg-orange-600]="mode() === 'focus'"
+      [class.dark:bg-orange-600]="mode() === 'focus'"
+      [class.dark:hover:bg-orange-500]="mode() === 'focus'"
+      [class.focus-visible:ring-orange-400]="mode() === 'focus'"
+      [class.shadow-orange-200]="mode() === 'focus'"
+      [class.dark:shadow-orange-900/40]="mode() === 'focus'"
+      [class.bg-emerald-500]="mode() !== 'focus'"
+      [class.hover:bg-emerald-600]="mode() !== 'focus'"
+      [class.dark:bg-emerald-600]="mode() !== 'focus'"
+      [class.dark:hover:bg-emerald-500]="mode() !== 'focus'"
+      [class.focus-visible:ring-emerald-400]="mode() !== 'focus'"
+      [class.shadow-emerald-200]="mode() !== 'focus'"
+      [class.dark:shadow-emerald-900/40]="mode() !== 'focus'"
+    >
+      @if (isRunning()) {
+        <lucide-angular [img]="Pause" [size]="18" strokeWidth="2.5" />
+        <span>Pausar</span>
+      } @else {
+        <lucide-angular [img]="Play" [size]="18" strokeWidth="2.5" />
+        <span>{{ timeLeft() < (25 * 60) && timeLeft() > 0 ? 'Continuar' : 'Iniciar' }}</span>
+      }
+    </button>
+  </div>
+
+  <!-- ── Chip reward hint ───────────────────────────────────────── -->
+  @if (mode() === 'focus') {
+    <p class="text-xs text-stone-400 dark:text-stone-500 text-center font-medium">
+      Completa la sesión para ganar
+      <span class="text-amber-500 dark:text-amber-400 font-bold">+1 ficha</span>
+    </p>
+  }
+
+</div>

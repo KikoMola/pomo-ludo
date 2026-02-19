@@ -7,7 +7,7 @@ import {
   signal,
 } from '@angular/core';
 import { NgpButton } from 'ng-primitives/button';
-import { LucideAngularModule, Play, Pause, RotateCcw, Coffee, Brain, Sofa } from 'lucide-angular';
+import { LucideAngularModule, Play, Pause, RotateCcw, Coffee, Brain, Sofa, Coins } from 'lucide-angular';
 import { interval, Subscription } from 'rxjs';
 import { UserService } from '../../../../core/services/user.service';
 
@@ -20,7 +20,7 @@ const DURATIONS: Record<PomodoroMode, number> = {
 };
 
 const SESSIONS_BEFORE_LONG_BREAK = 4;
-const RING_RADIUS = 115;
+const RING_RADIUS = 155;
 const CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS;
 
 @Component({
@@ -86,6 +86,7 @@ export class PomodoroTimerComponent implements OnDestroy {
   readonly Coffee = Coffee;
   readonly Brain = Brain;
   readonly Sofa = Sofa;
+  readonly Coins = Coins;
 
   toggle(): void {
     if (this.isRunning()) {

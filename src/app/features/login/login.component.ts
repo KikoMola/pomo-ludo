@@ -9,33 +9,33 @@ import { UserService } from '../../core/services/user.service';
 import { ThemeService } from '../../core/services/theme.service';
 
 @Component({
-  selector: 'app-login',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, NgpInput, NgpButton, NgpFormField, NgpLabel, LucideAngularModule],
-  templateUrl: './login.component.html',
+    selector: 'app-login',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [ReactiveFormsModule, NgpInput, NgpButton, NgpFormField, NgpLabel, LucideAngularModule],
+    templateUrl: './login.component.html',
 })
 export class LoginComponent {
-  private readonly router = inject(Router);
-  readonly userService = inject(UserService);
-  readonly themeService = inject(ThemeService);
+    private readonly router = inject(Router);
+    readonly userService = inject(UserService);
+    readonly themeService = inject(ThemeService);
 
-  readonly BookOpen = BookOpen;
-  readonly Coffee = Coffee;
-  readonly Spade = Spade;
-  readonly LogIn = LogIn;
-  readonly Sun = Sun;
-  readonly Moon = Moon;
+    readonly BookOpen = BookOpen;
+    readonly Coffee = Coffee;
+    readonly Spade = Spade;
+    readonly LogIn = LogIn;
+    readonly Sun = Sun;
+    readonly Moon = Moon;
 
-  readonly form = new FormGroup({
-    name: new FormControl('', {
-      nonNullable: true,
-      validators: [Validators.required, Validators.minLength(2)],
-    }),
-  });
+    readonly form = new FormGroup({
+        name: new FormControl('', {
+            nonNullable: true,
+            validators: [Validators.required, Validators.minLength(2)],
+        }),
+    });
 
-  onSubmit(): void {
-    if (this.form.invalid) return;
-    this.userService.setName(this.form.controls.name.value.trim());
-    this.router.navigate(['/dashboard']);
-  }
+    onSubmit(): void {
+        if (this.form.invalid) return;
+        this.userService.setName(this.form.controls.name.value.trim());
+        this.router.navigate(['/dashboard']);
+    }
 }

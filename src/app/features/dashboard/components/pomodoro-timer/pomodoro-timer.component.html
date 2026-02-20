@@ -1,277 +1,249 @@
 <div
-  class="w-full max-w-5xl flex flex-col lg:flex-row items-center lg:items-stretch gap-8 lg:gap-12
-         bg-white/60 dark:bg-stone-800/60 backdrop-blur-md
-         border border-white/40 dark:border-stone-700
-         rounded-[2.5rem] p-8 sm:p-12
-         shadow-[0_8px_40px_rgb(0,0,0,0.06)] dark:shadow-stone-950/50"
+    class="w-full max-w-5xl flex flex-col lg:flex-row items-center lg:items-stretch gap-8 lg:gap-12 bg-white/60 dark:bg-stone-800/60 backdrop-blur-md border border-white/40 dark:border-stone-700 rounded-[2.5rem] p-8 sm:p-12 shadow-[0_8px_40px_rgb(0,0,0,0.06)] dark:shadow-stone-950/50"
 >
+    <!-- ══ LEFT: Ring ═══════════════════════════════════════════════ -->
+    <div class="flex-1 flex items-center justify-center">
+        <div class="relative flex items-center justify-center">
+            <!-- Glow -->
+            <div
+                class="absolute w-72 h-72 rounded-full blur-3xl opacity-25 transition-colors duration-700"
+                [class.bg-orange-400]="mode() === 'focus'"
+                [class.bg-emerald-400]="mode() === 'shortBreak'"
+                [class.bg-sky-400]="mode() === 'longBreak'"
+            ></div>
 
-  <!-- ══ LEFT: Ring ═══════════════════════════════════════════════ -->
-  <div class="flex-1 flex items-center justify-center">
-    <div class="relative flex items-center justify-center">
-      <!-- Glow -->
-      <div
-        class="absolute w-72 h-72 rounded-full blur-3xl opacity-25 transition-colors duration-700"
-        [class.bg-orange-400]="mode() === 'focus'"
-        [class.bg-emerald-400]="mode() === 'shortBreak'"
-        [class.bg-sky-400]="mode() === 'longBreak'"
-      ></div>
-
-      <svg
-        width="360"
-        height="360"
-        viewBox="0 0 360 360"
-        class="relative -rotate-90 drop-shadow-xl"
-        role="img"
-        [attr.aria-label]="minutes() + ':' + seconds() + ' restantes en modo ' + modeLabel()"
-      >
-        <!-- Background track -->
-        <circle
-          cx="180"
-          cy="180"
-          [attr.r]="RING_RADIUS"
-          fill="none"
-          stroke-width="18"
-          [class]="ringBgClass()"
-          stroke="currentColor"
-          class="transition-colors duration-500"
-        />
-        <!-- Progress arc -->
-        <circle
-          cx="180"
-          cy="180"
-          [attr.r]="RING_RADIUS"
-          fill="none"
-          stroke-width="18"
-          stroke-linecap="round"
-          [attr.stroke-dasharray]="CIRCUMFERENCE"
-          [attr.stroke-dashoffset]="dashOffset()"
-          [class]="ringColorClass()"
-          stroke="currentColor"
-          class="transition-all duration-1000 ease-linear"
-        />
-      </svg>
-
-      <!-- Time overlay -->
-      <div class="absolute flex flex-col items-center gap-1">
-        @if (isEditing()) {
-          <div class="flex flex-col items-center gap-3">
-            <div class="flex items-baseline gap-2">
-              <input
-                data-edit-input
-                type="number"
-                min="1"
-                max="99"
-                [value]="editMinutes()"
-                (keydown.enter)="confirmEditFromEvent($event)"
-                (keydown.escape)="cancelEdit()"
-                (blur)="confirmEditFromEvent($event)"
-                class="w-28 text-7xl font-black tabular-nums tracking-tighter text-center
-                       bg-transparent outline-none border-b-4
-                       text-stone-800 dark:text-stone-100
-                       [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                [class.border-orange-400]="mode() === 'focus'"
-                [class.border-emerald-400]="mode() === 'shortBreak'"
-                [class.border-sky-400]="mode() === 'longBreak'"
-              />
-              <span class="text-2xl font-bold text-stone-400 dark:text-stone-500">min</span>
-            </div>
-            <span class="text-xs text-stone-400 dark:text-stone-500">
-              Enter confirma &middot; Esc cancela
-            </span>
-          </div>
-        } @else {
-          <button
-            type="button"
-            (click)="startEdit()"
-            [disabled]="isRunning()"
-            class="flex flex-col items-center gap-1 group bg-transparent border-none outline-none focus-visible:ring-2 focus-visible:ring-stone-400 rounded-lg"
-            [class.cursor-pointer]="!isRunning()"
-            [class.cursor-default]="isRunning()"
-            [attr.aria-label]="'Tiempo: ' + minutes() + ':' + seconds() + (isRunning() ? '' : '. Clic para editar duración')"
-          >
-            <span
-              class="text-7xl font-black tabular-nums tracking-tighter text-stone-800 dark:text-stone-100"
-              aria-live="off"
+            <svg
+                width="360"
+                height="360"
+                viewBox="0 0 360 360"
+                class="relative -rotate-90 drop-shadow-xl"
+                role="img"
+                [attr.aria-label]="minutes() + ':' + seconds() + ' restantes en modo ' + modeLabel()"
             >
-              {{ minutes() }}:{{ seconds() }}
-            </span>
-            <span class="text-base font-bold uppercase tracking-[0.2em] text-stone-400 dark:text-stone-500 flex items-center gap-1.5">
-              {{ modeLabel() }}
-              @if (!isRunning()) {
-                <lucide-angular
-                  [img]="Pencil"
-                  [size]="12"
-                  strokeWidth="2.5"
-                  class="opacity-0 group-hover:opacity-50 transition-opacity duration-200"
+                <!-- Background track -->
+                <circle
+                    cx="180"
+                    cy="180"
+                    [attr.r]="RING_RADIUS"
+                    fill="none"
+                    stroke-width="18"
+                    [class]="ringBgClass()"
+                    stroke="currentColor"
+                    class="transition-colors duration-500"
                 />
-              }
+                <!-- Progress arc -->
+                <circle
+                    cx="180"
+                    cy="180"
+                    [attr.r]="RING_RADIUS"
+                    fill="none"
+                    stroke-width="18"
+                    stroke-linecap="round"
+                    [attr.stroke-dasharray]="CIRCUMFERENCE"
+                    [attr.stroke-dashoffset]="dashOffset()"
+                    [class]="ringColorClass()"
+                    stroke="currentColor"
+                    class="transition-all duration-1000 ease-linear"
+                />
+            </svg>
+
+            <!-- Time overlay -->
+            <div class="absolute flex flex-col items-center gap-1">
+                @if (isEditing()) {
+                    <div class="flex flex-col items-center gap-3">
+                        <div class="flex items-baseline gap-2">
+                            <input
+                                data-edit-input
+                                type="number"
+                                min="1"
+                                max="99"
+                                [value]="editMinutes()"
+                                (keydown.enter)="confirmEditFromEvent($event)"
+                                (keydown.escape)="cancelEdit()"
+                                (blur)="confirmEditFromEvent($event)"
+                                class="w-28 text-7xl font-black tabular-nums tracking-tighter text-center bg-transparent outline-none border-b-4 text-stone-800 dark:text-stone-100 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                                [class.border-orange-400]="mode() === 'focus'"
+                                [class.border-emerald-400]="mode() === 'shortBreak'"
+                                [class.border-sky-400]="mode() === 'longBreak'"
+                            />
+                            <span class="text-2xl font-bold text-stone-400 dark:text-stone-500">min</span>
+                        </div>
+                        <span class="text-xs text-stone-400 dark:text-stone-500"> Enter confirma &middot; Esc cancela </span>
+                    </div>
+                } @else {
+                    <button
+                        type="button"
+                        (click)="startEdit()"
+                        [disabled]="isRunning()"
+                        class="flex flex-col items-center gap-1 group bg-transparent border-none outline-none focus-visible:ring-2 focus-visible:ring-stone-400 rounded-lg"
+                        [class.cursor-pointer]="!isRunning()"
+                        [class.cursor-default]="isRunning()"
+                        [attr.aria-label]="'Tiempo: ' + minutes() + ':' + seconds() + (isRunning() ? '' : '. Clic para editar duración')"
+                    >
+                        <span class="text-7xl font-black tabular-nums tracking-tighter text-stone-800 dark:text-stone-100" aria-live="off">
+                            {{ minutes() }}:{{ seconds() }}
+                        </span>
+                        <span
+                            class="text-base font-bold uppercase tracking-[0.2em] text-stone-400 dark:text-stone-500 flex items-center gap-1.5"
+                        >
+                            {{ modeLabel() }}
+                            @if (!isRunning()) {
+                                <lucide-angular
+                                    [img]="Pencil"
+                                    [size]="12"
+                                    strokeWidth="2.5"
+                                    class="opacity-0 group-hover:opacity-50 transition-opacity duration-200"
+                                />
+                            }
+                        </span>
+                    </button>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- ══ RIGHT: Controls ══════════════════════════════════════════ -->
+    <div class="flex flex-col items-center lg:items-start justify-center gap-8 lg:w-64 w-full">
+        <!-- Title -->
+        <div class="text-center lg:text-left">
+            <h2 class="text-3xl font-black text-stone-800 dark:text-stone-100 tracking-tight">Pomodoro</h2>
+            <p class="text-sm text-stone-400 dark:text-stone-500 mt-1 font-medium">Estudia en bloques. Gana fichas.</p>
+        </div>
+
+        <!-- Mode tabs -->
+        <div
+            class="flex gap-1 p-1 rounded-2xl bg-stone-100 dark:bg-stone-900/60 border border-stone-200 dark:border-stone-700 w-full"
+            role="tablist"
+            aria-label="Modo del pomodoro"
+        >
+            <button
+                ngpButton
+                role="tab"
+                [attr.aria-selected]="mode() === 'focus'"
+                (click)="setMode('focus')"
+                class="flex-1 flex items-center justify-center gap-1.5 py-2.5 px-2 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer"
+                [class.bg-white]="mode() === 'focus'"
+                [class.dark:bg-stone-800]="mode() === 'focus'"
+                [class.text-orange-600]="mode() === 'focus'"
+                [class.dark:text-orange-300]="mode() === 'focus'"
+                [class.shadow-sm]="mode() === 'focus'"
+                [class.text-stone-500]="mode() !== 'focus'"
+                [class.dark:text-stone-400]="mode() !== 'focus'"
+            >
+                <lucide-angular [img]="Brain" [size]="14" strokeWidth="2.5" />
+                Enfoque
+            </button>
+            <button
+                ngpButton
+                role="tab"
+                [attr.aria-selected]="mode() === 'shortBreak'"
+                (click)="setMode('shortBreak')"
+                class="flex-1 flex items-center justify-center gap-1.5 py-2.5 px-2 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer"
+                [class.bg-white]="mode() === 'shortBreak'"
+                [class.dark:bg-stone-800]="mode() === 'shortBreak'"
+                [class.text-emerald-600]="mode() === 'shortBreak'"
+                [class.dark:text-emerald-300]="mode() === 'shortBreak'"
+                [class.shadow-sm]="mode() === 'shortBreak'"
+                [class.text-stone-500]="mode() !== 'shortBreak'"
+                [class.dark:text-stone-400]="mode() !== 'shortBreak'"
+            >
+                <lucide-angular [img]="Coffee" [size]="14" strokeWidth="2.5" />
+                Corto
+            </button>
+            <button
+                ngpButton
+                role="tab"
+                [attr.aria-selected]="mode() === 'longBreak'"
+                (click)="setMode('longBreak')"
+                class="flex-1 flex items-center justify-center gap-1.5 py-2.5 px-2 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer"
+                [class.bg-white]="mode() === 'longBreak'"
+                [class.dark:bg-stone-800]="mode() === 'longBreak'"
+                [class.text-sky-600]="mode() === 'longBreak'"
+                [class.dark:text-sky-300]="mode() === 'longBreak'"
+                [class.shadow-sm]="mode() === 'longBreak'"
+                [class.text-stone-500]="mode() !== 'longBreak'"
+                [class.dark:text-stone-400]="mode() !== 'longBreak'"
+            >
+                <lucide-angular [img]="Sofa" [size]="14" strokeWidth="2.5" />
+                Largo
+            </button>
+        </div>
+
+        <!-- Session progress -->
+        <div class="flex flex-col gap-3 w-full">
+            <span class="text-xs font-bold uppercase tracking-widest text-stone-400 dark:text-stone-500"> Ciclo actual </span>
+            <div class="flex items-center gap-2" aria-label="Sesiones completadas en el ciclo actual">
+                @for (filled of sessionDots(); track $index) {
+                    <div
+                        class="flex-1 h-2 rounded-full transition-all duration-500"
+                        [class.bg-orange-400]="filled"
+                        [class.dark:bg-orange-500]="filled"
+                        [class.bg-stone-200]="!filled"
+                        [class.dark:bg-stone-700]="!filled"
+                        [attr.aria-label]="'Sesión ' + ($index + 1) + (filled ? ' completada' : ' pendiente')"
+                    ></div>
+                }
+            </div>
+            <span class="text-xs text-stone-400 dark:text-stone-500 font-medium">
+                {{ sessionsCompleted() }} sesión{{ sessionsCompleted() === 1 ? '' : 'es' }} completadas
             </span>
-          </button>
-        }
-      </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="flex items-center gap-3 w-full">
+            <button
+                ngpButton
+                (click)="reset()"
+                aria-label="Reiniciar temporizador"
+                class="p-3.5 rounded-2xl cursor-pointer transition-all duration-200 active:scale-90 shrink-0 text-stone-400 dark:text-stone-500 bg-stone-100 dark:bg-stone-900/60 border border-stone-200 dark:border-stone-700 hover:text-stone-600 dark:hover:text-stone-300 hover:border-stone-300"
+            >
+                <lucide-angular [img]="RotateCcw" [size]="20" strokeWidth="2.5" />
+            </button>
+
+            <button
+                ngpButton
+                (click)="toggle()"
+                [attr.aria-label]="isRunning() ? 'Pausar temporizador' : 'Iniciar temporizador'"
+                class="flex-1 flex items-center justify-center gap-2.5 py-3.5 rounded-2xl font-bold text-sm cursor-pointer text-white transition-all duration-200 active:scale-95 shadow-lg focus-visible:ring-2 focus-visible:ring-offset-2"
+                [class.bg-orange-500]="mode() === 'focus'"
+                [class.hover:bg-orange-600]="mode() === 'focus'"
+                [class.dark:bg-orange-600]="mode() === 'focus'"
+                [class.shadow-orange-200]="mode() === 'focus'"
+                [class.dark:shadow-orange-900/40]="mode() === 'focus'"
+                [class.focus-visible:ring-orange-400]="mode() === 'focus'"
+                [class.bg-emerald-500]="mode() === 'shortBreak'"
+                [class.hover:bg-emerald-600]="mode() === 'shortBreak'"
+                [class.dark:bg-emerald-600]="mode() === 'shortBreak'"
+                [class.shadow-emerald-200]="mode() === 'shortBreak'"
+                [class.dark:shadow-emerald-900/40]="mode() === 'shortBreak'"
+                [class.focus-visible:ring-emerald-400]="mode() === 'shortBreak'"
+                [class.bg-sky-500]="mode() === 'longBreak'"
+                [class.hover:bg-sky-600]="mode() === 'longBreak'"
+                [class.dark:bg-sky-600]="mode() === 'longBreak'"
+                [class.shadow-sky-200]="mode() === 'longBreak'"
+                [class.dark:shadow-sky-900/40]="mode() === 'longBreak'"
+                [class.focus-visible:ring-sky-400]="mode() === 'longBreak'"
+            >
+                @if (isRunning()) {
+                    <lucide-angular [img]="Pause" [size]="18" strokeWidth="2.5" />
+                    <span>Pausar</span>
+                } @else {
+                    <lucide-angular [img]="Play" [size]="18" strokeWidth="2.5" />
+                    <span>{{ timeLeft() < 25 * 60 && timeLeft() > 0 ? 'Continuar' : 'Iniciar' }}</span>
+                }
+            </button>
+        </div>
+
+        <!-- Chip hint -->
+        <div
+            class="flex items-center gap-3 w-full px-4 py-3 rounded-2xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700/40 transition-opacity duration-300"
+            [class.invisible]="mode() !== 'focus'"
+            [class.opacity-0]="mode() !== 'focus'"
+        >
+            <lucide-angular [img]="Coins" [size]="18" strokeWidth="2.5" class="text-amber-500 dark:text-amber-400 shrink-0" />
+            <p class="text-xs text-amber-700 dark:text-amber-300 font-semibold leading-snug">
+                Completa la sesión para ganar <strong>+1 ficha</strong>
+            </p>
+        </div>
     </div>
-  </div>
-
-  <!-- ══ RIGHT: Controls ══════════════════════════════════════════ -->
-  <div class="flex flex-col items-center lg:items-start justify-center gap-8 lg:w-64 w-full">
-
-    <!-- Title -->
-    <div class="text-center lg:text-left">
-      <h2 class="text-3xl font-black text-stone-800 dark:text-stone-100 tracking-tight">Pomodoro</h2>
-      <p class="text-sm text-stone-400 dark:text-stone-500 mt-1 font-medium">
-        Estudia en bloques. Gana fichas.
-      </p>
-    </div>
-
-    <!-- Mode tabs -->
-    <div
-      class="flex gap-1 p-1 rounded-2xl bg-stone-100 dark:bg-stone-900/60 border border-stone-200 dark:border-stone-700 w-full"
-      role="tablist"
-      aria-label="Modo del pomodoro"
-    >
-      <button
-        ngpButton
-        role="tab"
-        [attr.aria-selected]="mode() === 'focus'"
-        (click)="setMode('focus')"
-        class="flex-1 flex items-center justify-center gap-1.5 py-2.5 px-2 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer"
-        [class.bg-white]="mode() === 'focus'"
-        [class.dark:bg-stone-800]="mode() === 'focus'"
-        [class.text-orange-600]="mode() === 'focus'"
-        [class.dark:text-orange-300]="mode() === 'focus'"
-        [class.shadow-sm]="mode() === 'focus'"
-        [class.text-stone-500]="mode() !== 'focus'"
-        [class.dark:text-stone-400]="mode() !== 'focus'"
-      >
-        <lucide-angular [img]="Brain" [size]="14" strokeWidth="2.5" />
-        Enfoque
-      </button>
-      <button
-        ngpButton
-        role="tab"
-        [attr.aria-selected]="mode() === 'shortBreak'"
-        (click)="setMode('shortBreak')"
-        class="flex-1 flex items-center justify-center gap-1.5 py-2.5 px-2 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer"
-        [class.bg-white]="mode() === 'shortBreak'"
-        [class.dark:bg-stone-800]="mode() === 'shortBreak'"
-        [class.text-emerald-600]="mode() === 'shortBreak'"
-        [class.dark:text-emerald-300]="mode() === 'shortBreak'"
-        [class.shadow-sm]="mode() === 'shortBreak'"
-        [class.text-stone-500]="mode() !== 'shortBreak'"
-        [class.dark:text-stone-400]="mode() !== 'shortBreak'"
-      >
-        <lucide-angular [img]="Coffee" [size]="14" strokeWidth="2.5" />
-        Corto
-      </button>
-      <button
-        ngpButton
-        role="tab"
-        [attr.aria-selected]="mode() === 'longBreak'"
-        (click)="setMode('longBreak')"
-        class="flex-1 flex items-center justify-center gap-1.5 py-2.5 px-2 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer"
-        [class.bg-white]="mode() === 'longBreak'"
-        [class.dark:bg-stone-800]="mode() === 'longBreak'"
-        [class.text-sky-600]="mode() === 'longBreak'"
-        [class.dark:text-sky-300]="mode() === 'longBreak'"
-        [class.shadow-sm]="mode() === 'longBreak'"
-        [class.text-stone-500]="mode() !== 'longBreak'"
-        [class.dark:text-stone-400]="mode() !== 'longBreak'"
-      >
-        <lucide-angular [img]="Sofa" [size]="14" strokeWidth="2.5" />
-        Largo
-      </button>
-    </div>
-
-    <!-- Session progress -->
-    <div class="flex flex-col gap-3 w-full">
-      <span class="text-xs font-bold uppercase tracking-widest text-stone-400 dark:text-stone-500">
-        Ciclo actual
-      </span>
-      <div
-        class="flex items-center gap-2"
-        aria-label="Sesiones completadas en el ciclo actual"
-      >
-        @for (filled of sessionDots(); track $index) {
-          <div
-            class="flex-1 h-2 rounded-full transition-all duration-500"
-            [class.bg-orange-400]="filled"
-            [class.dark:bg-orange-500]="filled"
-            [class.bg-stone-200]="!filled"
-            [class.dark:bg-stone-700]="!filled"
-            [attr.aria-label]="'Sesión ' + ($index + 1) + (filled ? ' completada' : ' pendiente')"
-          ></div>
-        }
-      </div>
-      <span class="text-xs text-stone-400 dark:text-stone-500 font-medium">
-        {{ sessionsCompleted() }} sesión{{ sessionsCompleted() === 1 ? '' : 'es' }} completadas
-      </span>
-    </div>
-
-    <!-- Controls -->
-    <div class="flex items-center gap-3 w-full">
-      <button
-        ngpButton
-        (click)="reset()"
-        aria-label="Reiniciar temporizador"
-        class="p-3.5 rounded-2xl cursor-pointer transition-all duration-200 active:scale-90 shrink-0
-               text-stone-400 dark:text-stone-500
-               bg-stone-100 dark:bg-stone-900/60 border border-stone-200 dark:border-stone-700
-               hover:text-stone-600 dark:hover:text-stone-300 hover:border-stone-300"
-      >
-        <lucide-angular [img]="RotateCcw" [size]="20" strokeWidth="2.5" />
-      </button>
-
-      <button
-        ngpButton
-        (click)="toggle()"
-        [attr.aria-label]="isRunning() ? 'Pausar temporizador' : 'Iniciar temporizador'"
-        class="flex-1 flex items-center justify-center gap-2.5 py-3.5 rounded-2xl font-bold text-sm cursor-pointer text-white
-               transition-all duration-200 active:scale-95 shadow-lg
-               focus-visible:ring-2 focus-visible:ring-offset-2"
-        [class.bg-orange-500]="mode() === 'focus'"
-        [class.hover:bg-orange-600]="mode() === 'focus'"
-        [class.dark:bg-orange-600]="mode() === 'focus'"
-        [class.shadow-orange-200]="mode() === 'focus'"
-        [class.dark:shadow-orange-900/40]="mode() === 'focus'"
-        [class.focus-visible:ring-orange-400]="mode() === 'focus'"
-        [class.bg-emerald-500]="mode() === 'shortBreak'"
-        [class.hover:bg-emerald-600]="mode() === 'shortBreak'"
-        [class.dark:bg-emerald-600]="mode() === 'shortBreak'"
-        [class.shadow-emerald-200]="mode() === 'shortBreak'"
-        [class.dark:shadow-emerald-900/40]="mode() === 'shortBreak'"
-        [class.focus-visible:ring-emerald-400]="mode() === 'shortBreak'"
-        [class.bg-sky-500]="mode() === 'longBreak'"
-        [class.hover:bg-sky-600]="mode() === 'longBreak'"
-        [class.dark:bg-sky-600]="mode() === 'longBreak'"
-        [class.shadow-sky-200]="mode() === 'longBreak'"
-        [class.dark:shadow-sky-900/40]="mode() === 'longBreak'"
-        [class.focus-visible:ring-sky-400]="mode() === 'longBreak'"
-      >
-        @if (isRunning()) {
-          <lucide-angular [img]="Pause" [size]="18" strokeWidth="2.5" />
-          <span>Pausar</span>
-        } @else {
-          <lucide-angular [img]="Play" [size]="18" strokeWidth="2.5" />
-          <span>{{ timeLeft() < (25 * 60) && timeLeft() > 0 ? 'Continuar' : 'Iniciar' }}</span>
-        }
-      </button>
-    </div>
-
-    <!-- Chip hint -->
-    <div
-      class="flex items-center gap-3 w-full px-4 py-3 rounded-2xl
-             bg-amber-50 dark:bg-amber-900/20
-             border border-amber-200 dark:border-amber-700/40
-             transition-opacity duration-300"
-      [class.invisible]="mode() !== 'focus'"
-      [class.opacity-0]="mode() !== 'focus'"
-    >
-      <lucide-angular [img]="Coins" [size]="18" strokeWidth="2.5" class="text-amber-500 dark:text-amber-400 shrink-0" />
-      <p class="text-xs text-amber-700 dark:text-amber-300 font-semibold leading-snug">
-        Completa la sesión para ganar <strong>+1 ficha</strong>
-      </p>
-    </div>
-
-  </div>
 </div>

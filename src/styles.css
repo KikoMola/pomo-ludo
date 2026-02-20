@@ -1,51 +1,50 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 /* Tailwind v4: dark mode basado en clase .dark en <html> */
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --font-sans: 'Quicksand', 'Nunito', ui-sans-serif, system-ui, sans-serif;
-  
-  /* Cozy Palette Extension */
-  --color-cozy-cream: #FFFAF5; /* Fondo claro crema */
-  --color-cozy-cream-dark: #2C2826; /* Fondo oscuro cálido */
-  
-  --color-pastel-blue: #E3F2FD;
-  --color-pastel-blue-dark: #1E3A8A;
-  
-  --color-pastel-pink: #FCE4EC;
-  --color-pastel-pink-dark: #831843;
-  
-  --color-pastel-purple: #F3E5F5;
-  --color-pastel-purple-dark: #4C1D95;
+    --font-sans: 'Quicksand', 'Nunito', ui-sans-serif, system-ui, sans-serif;
 
-  --color-pastel-orange: #FFF3E0;
-  --color-pastel-orange-dark: #7C2D12;
-  
-  --color-pastel-green: #E8F5E9;
-  --color-pastel-green-dark: #14532D;
+    /* Cozy Palette Extension */
+    --color-cozy-cream: #fffaf5; /* Fondo claro crema */
+    --color-cozy-cream-dark: #2c2826; /* Fondo oscuro cálido */
 
+    --color-pastel-blue: #e3f2fd;
+    --color-pastel-blue-dark: #1e3a8a;
+
+    --color-pastel-pink: #fce4ec;
+    --color-pastel-pink-dark: #831843;
+
+    --color-pastel-purple: #f3e5f5;
+    --color-pastel-purple-dark: #4c1d95;
+
+    --color-pastel-orange: #fff3e0;
+    --color-pastel-orange-dark: #7c2d12;
+
+    --color-pastel-green: #e8f5e9;
+    --color-pastel-green-dark: #14532d;
 }
 
 html {
-  font-family: var(--font-sans);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 *,
 *::before,
 *::after {
-  box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 body {
-  margin: 0;
-  background-color: var(--color-cozy-cream);
-  color: #44403C; /* Stone 700 */
+    margin: 0;
+    background-color: var(--color-cozy-cream);
+    color: #44403c; /* Stone 700 */
 }
 
 html.dark body {
-  background-color: var(--color-cozy-cream-dark);
-  color: #E7E5E4; /* Stone 200 */
+    background-color: var(--color-cozy-cream-dark);
+    color: #e7e5e4; /* Stone 200 */
 }

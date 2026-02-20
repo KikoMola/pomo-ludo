@@ -1,177 +1,151 @@
 <div class="min-h-screen flex flex-col bg-stone-50 dark:bg-stone-950 transition-colors duration-500">
-
-  <!-- ── Header ──────────────────────────────────────────────────── -->
-  <header
-    class="sticky top-0 z-50 flex items-center justify-between gap-3 px-4 sm:px-6 py-4 sm:py-3
-           bg-white/70 dark:bg-stone-900/70 backdrop-blur-xl
-           border-b border-stone-100 dark:border-stone-800
-           shadow-sm shadow-stone-200/20 dark:shadow-stone-950/20 supports-backdrop-filter:bg-white/60"
-  >
-    <!-- Logo: solo visible en sm+ -->
-    <div class="hidden sm:flex items-center gap-3">
-      <div class="flex items-center -space-x-1">
-        <div class="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-xl z-10 ring-2 ring-white dark:ring-stone-900 transform rotate-3">
-          <lucide-angular
-            [img]="Coffee"
-            [size]="18"
-            strokeWidth="2.5"
-            class="text-orange-500 dark:text-orange-300"
-          />
+    <!-- ── Header ──────────────────────────────────────────────────── -->
+    <header
+        class="sticky top-0 z-50 flex items-center justify-between gap-3 px-4 sm:px-6 py-4 sm:py-3 bg-white/70 dark:bg-stone-900/70 backdrop-blur-xl border-b border-stone-100 dark:border-stone-800 shadow-sm shadow-stone-200/20 dark:shadow-stone-950/20 supports-backdrop-filter:bg-white/60"
+    >
+        <!-- Logo: solo visible en sm+ -->
+        <div class="hidden sm:flex items-center gap-3">
+            <div class="flex items-center -space-x-1">
+                <div
+                    class="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-xl z-10 ring-2 ring-white dark:ring-stone-900 transform rotate-3"
+                >
+                    <lucide-angular [img]="Coffee" [size]="18" strokeWidth="2.5" class="text-orange-500 dark:text-orange-300" />
+                </div>
+                <div class="p-2 bg-rose-100 dark:bg-rose-900/30 rounded-xl ring-2 ring-white dark:ring-stone-900 transform -rotate-3">
+                    <lucide-angular [img]="Spade" [size]="18" strokeWidth="2.5" class="text-rose-500 dark:text-rose-300" />
+                </div>
+            </div>
+            <span class="text-lg font-black text-stone-700 dark:text-stone-200 tracking-tight">
+                Pomo<span class="text-orange-500 dark:text-orange-400">Ludo</span>
+            </span>
         </div>
-        <div class="p-2 bg-rose-100 dark:bg-rose-900/30 rounded-xl ring-2 ring-white dark:ring-stone-900 transform -rotate-3">
-          <lucide-angular
-            [img]="Spade"
-            [size]="18"
-            strokeWidth="2.5"
-            class="text-rose-500 dark:text-rose-300"
-          />
+
+        <!-- Nav tabs -->
+        <nav class="flex justify-start gap-2" aria-label="Secciones">
+            <button
+                ngpButton
+                (click)="activeSection.set('pomodoro')"
+                [attr.aria-current]="activeSection() === 'pomodoro' ? 'page' : null"
+                [class]="pomodoroTabClass()"
+            >
+                <lucide-angular [img]="Timer" [size]="20" strokeWidth="2.5" />
+                <span class="hidden sm:inline font-bold">Pomodoro</span>
+            </button>
+            <button
+                ngpButton
+                (click)="activeSection.set('blackjack')"
+                [attr.aria-current]="activeSection() === 'blackjack' ? 'page' : null"
+                [class]="blackjackTabClass()"
+            >
+                <lucide-angular [img]="Spade" [size]="20" strokeWidth="2.5" />
+                <span class="hidden sm:inline font-bold">Blackjack</span>
+            </button>
+        </nav>
+
+        <!-- Right side -->
+        <div class="flex items-center justify-end gap-2 sm:gap-3 min-w-0">
+            <!-- Chips badge: Solo icono en móvil, completo en desktop -->
+            <div
+                class="flex items-center gap-2 px-2 py-1.5 sm:px-3 rounded-full shadow-sm bg-amber-100/60 dark:bg-amber-900/40 border border-amber-200 dark:border-amber-700/50 hover:scale-105 transition-transform cursor-help"
+                title="Tus fichas ganadas"
+            >
+                <div class="p-1 bg-amber-200 dark:bg-amber-700/50 rounded-full">
+                    <lucide-angular [img]="Coins" [size]="14" strokeWidth="2.5" class="text-amber-700 dark:text-amber-200" />
+                </div>
+                <span class="text-sm font-extrabold text-amber-700 dark:text-amber-200 pr-1">
+                    {{ userService.chips() }}
+                </span>
+            </div>
+
+            <!-- Username: Visible también en móvil -->
+            <span
+                class="flex items-center gap-2 px-2 py-1.5 sm:px-3 rounded-full shadow-sm bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-sm font-bold text-stone-600 dark:text-stone-300 max-w-20 sm:max-w-32 truncate select-none"
+            >
+                <div class="p-1 bg-orange-100 dark:bg-orange-900/50 rounded-full hidden xs:block">
+                    <lucide-angular [img]="BookOpen" [size]="14" strokeWidth="2.5" class="text-orange-500 dark:text-orange-300" />
+                </div>
+                <span class="truncate">{{ userService.name() }}</span>
+            </span>
+
+            <div class="h-6 w-px bg-stone-200 dark:bg-stone-800 mx-1 hidden sm:block"></div>
+
+            <!-- Theme toggle -->
+            <button
+                ngpButton
+                (click)="themeService.toggle()"
+                aria-label="Cambiar tema"
+                class="p-2 rounded-full cursor-pointer text-stone-500 dark:text-stone-400 bg-transparent hover:bg-stone-100 dark:hover:bg-stone-800 hover:text-orange-500 dark:hover:text-amber-300 transition-all duration-300 active:scale-90"
+            >
+                @if (themeService.isDark()) {
+                    <lucide-angular [img]="Sun" [size]="20" strokeWidth="2" />
+                } @else {
+                    <lucide-angular [img]="Moon" [size]="20" strokeWidth="2" />
+                }
+            </button>
+
+            <!-- Logout -->
+            <button
+                ngpButton
+                (click)="userService.logout()"
+                aria-label="Cerrar sesión"
+                class="p-2 rounded-full cursor-pointer text-stone-400 dark:text-stone-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 hover:text-rose-500 dark:hover:text-rose-400 transition-all duration-300 active:scale-90"
+                title="Cerrar sesión"
+            >
+                <lucide-angular [img]="LogOut" [size]="20" strokeWidth="2.5" />
+            </button>
         </div>
-      </div>
-      <span class="text-lg font-black text-stone-700 dark:text-stone-200 tracking-tight">
-        Pomo<span class="text-orange-500 dark:text-orange-400">Ludo</span>
-      </span>
-    </div>
+    </header>
 
-    <!-- Nav tabs -->
-    <nav class="flex justify-start gap-2" aria-label="Secciones">
-      <button
-        ngpButton
-        (click)="activeSection.set('pomodoro')"
-        [attr.aria-current]="activeSection() === 'pomodoro' ? 'page' : null"
-        [class]="pomodoroTabClass()"
-      >
-        <lucide-angular [img]="Timer" [size]="20" strokeWidth="2.5" />
-        <span class="hidden sm:inline font-bold">Pomodoro</span>
-      </button>
-      <button
-        ngpButton
-        (click)="activeSection.set('blackjack')"
-        [attr.aria-current]="activeSection() === 'blackjack' ? 'page' : null"
-        [class]="blackjackTabClass()"
-      >
-        <lucide-angular [img]="Spade" [size]="20" strokeWidth="2.5" />
-        <span class="hidden sm:inline font-bold">Blackjack</span>
-      </button>
-    </nav>
-
-    <!-- Right side -->
-    <div class="flex items-center justify-end gap-2 sm:gap-3 min-w-0">
-      <!-- Chips badge: Solo icono en móvil, completo en desktop -->
-      <div
-        class="flex items-center gap-2 px-2 py-1.5 sm:px-3 rounded-full shadow-sm
-               bg-amber-100/60 dark:bg-amber-900/40
-               border border-amber-200 dark:border-amber-700/50
-               hover:scale-105 transition-transform cursor-help"
-        title="Tus fichas ganadas"
-      >
-        <div class="p-1 bg-amber-200 dark:bg-amber-700/50 rounded-full">
-            <lucide-angular [img]="Coins" [size]="14" strokeWidth="2.5" class="text-amber-700 dark:text-amber-200" />
-        </div>
-        <span class="text-sm font-extrabold text-amber-700 dark:text-amber-200 pr-1">
-          {{ userService.chips() }}
-        </span>
-      </div>
-
-      <!-- Username: Visible también en móvil -->
-      <span
-        class="flex items-center gap-2 px-2 py-1.5 sm:px-3 rounded-full shadow-sm
-               bg-white dark:bg-stone-800
-               border border-stone-200 dark:border-stone-700
-               text-sm font-bold text-stone-600 dark:text-stone-300
-               max-w-20 sm:max-w-32 truncate select-none"
-      >
-        <div class="p-1 bg-orange-100 dark:bg-orange-900/50 rounded-full hidden xs:block">
-            <lucide-angular [img]="BookOpen" [size]="14" strokeWidth="2.5" class="text-orange-500 dark:text-orange-300" />
-        </div>
-        <span class="truncate">{{ userService.name() }}</span>
-      </span>
-
-      <div class="h-6 w-px bg-stone-200 dark:bg-stone-800 mx-1 hidden sm:block"></div>
-
-      <!-- Theme toggle -->
-      <button
-        ngpButton
-        (click)="themeService.toggle()"
-        aria-label="Cambiar tema"
-        class="p-2 rounded-full cursor-pointer
-               text-stone-500 dark:text-stone-400
-               bg-transparent hover:bg-stone-100 dark:hover:bg-stone-800
-               hover:text-orange-500 dark:hover:text-amber-300
-               transition-all duration-300 active:scale-90"
-      >
-        @if (themeService.isDark()) {
-          <lucide-angular [img]="Sun" [size]="20" strokeWidth="2" />
-        } @else {
-          <lucide-angular [img]="Moon" [size]="20" strokeWidth="2" />
+    <!-- ── Main ─────────────────────────────────────────────────────── -->
+    <main class="flex-1 p-4 sm:p-8 flex flex-col items-center justify-center min-h-[calc(100vh-80px)]">
+        @if (activeSection() === 'pomodoro') {
+            <app-pomodoro-timer />
         }
-      </button>
 
-      <!-- Logout -->
-      <button
-        ngpButton
-        (click)="userService.logout()"
-        aria-label="Cerrar sesión"
-        class="p-2 rounded-full cursor-pointer
-               text-stone-400 dark:text-stone-500
-               hover:bg-rose-50 dark:hover:bg-rose-950/30
-               hover:text-rose-500 dark:hover:text-rose-400
-               transition-all duration-300 active:scale-90"
-        title="Cerrar sesión"
-      >
-        <lucide-angular [img]="LogOut" [size]="20" strokeWidth="2.5" />
-      </button>
-    </div>
-  </header>
+        @if (activeSection() === 'blackjack') {
+            <!-- Placeholder Blackjack -->
+            <div
+                class="w-full max-w-md flex flex-col items-center gap-8 bg-white/60 dark:bg-stone-800/60 backdrop-blur-md border border-white/40 dark:border-stone-700 rounded-[2.5rem] p-8 sm:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-stone-950/40 text-center transform hover:scale-[1.02] transition-transform duration-500"
+            >
+                <div class="relative group">
+                    <div
+                        class="absolute inset-0 bg-rose-200/50 dark:bg-rose-900/40 rounded-3xl blur-xl group-hover:blur-2xl transition-all duration-500"
+                    ></div>
+                    <div
+                        class="relative p-6 bg-rose-100 dark:bg-rose-800/30 rounded-3xl shadow-inner border border-rose-200/50 dark:border-rose-700/30"
+                    >
+                        <lucide-angular
+                            [img]="Spade"
+                            [size]="56"
+                            strokeWidth="1.5"
+                            class="text-rose-500 dark:text-rose-300 drop-shadow-sm"
+                        />
+                    </div>
+                </div>
 
-  <!-- ── Main ─────────────────────────────────────────────────────── -->
-  <main class="flex-1 p-4 sm:p-8 flex flex-col items-center justify-center min-h-[calc(100vh-80px)]">
+                <div class="flex flex-col gap-3">
+                    <h2 class="text-3xl font-black text-stone-800 dark:text-stone-100 tracking-tight">Blackjack</h2>
+                    <p class="text-base text-stone-500 dark:text-stone-400 font-medium leading-relaxed max-w-xs mx-auto">
+                        La mesa de cartas se está puliendo.<br />
+                        Consigue <strong class="text-rose-500 dark:text-rose-400">fichas</strong> estudiando para jugar.
+                    </p>
+                </div>
 
-    @if (activeSection() === 'pomodoro') {
-      <app-pomodoro-timer />
-    }
+                <div
+                    class="flex items-center gap-2.5 px-5 py-2.5 rounded-2xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700/40 shadow-sm shadow-amber-100/50 dark:shadow-none"
+                >
+                    <lucide-angular [img]="Coins" [size]="16" strokeWidth="2.5" class="text-amber-500 dark:text-amber-300" />
+                    <span class="text-xs font-bold text-amber-600 dark:text-amber-300 uppercase tracking-wide">
+                        Fichas disponibles: {{ userService.chips() }}
+                    </span>
+                </div>
 
-    @if (activeSection() === 'blackjack') {
-      <!-- Placeholder Blackjack -->
-      <div
-        class="w-full max-w-md flex flex-col items-center gap-8
-               bg-white/60 dark:bg-stone-800/60 backdrop-blur-md
-               border border-white/40 dark:border-stone-700
-               rounded-[2.5rem] p-8 sm:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-stone-950/40
-               text-center transform hover:scale-[1.02] transition-transform duration-500"
-      >
-        <div class="relative group">
-           <div class="absolute inset-0 bg-rose-200/50 dark:bg-rose-900/40 rounded-3xl blur-xl group-hover:blur-2xl transition-all duration-500"></div>
-           <div class="relative p-6 bg-rose-100 dark:bg-rose-800/30 rounded-3xl shadow-inner border border-rose-200/50 dark:border-rose-700/30">
-            <lucide-angular [img]="Spade" [size]="56" strokeWidth="1.5" class="text-rose-500 dark:text-rose-300 drop-shadow-sm" />
-          </div>
-        </div>
-        
-        <div class="flex flex-col gap-3">
-          <h2 class="text-3xl font-black text-stone-800 dark:text-stone-100 tracking-tight">Blackjack</h2>
-          <p class="text-base text-stone-500 dark:text-stone-400 font-medium leading-relaxed max-w-xs mx-auto">
-            La mesa de cartas se está puliendo.<br />
-            Consigue <strong class="text-rose-500 dark:text-rose-400">fichas</strong> estudiando para jugar.
-          </p>
-        </div>
-
-        <div class="flex items-center gap-2.5 px-5 py-2.5 rounded-2xl
-                    bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700/40
-                    shadow-sm shadow-amber-100/50 dark:shadow-none">
-          <lucide-angular [img]="Coins" [size]="16" strokeWidth="2.5" class="text-amber-500 dark:text-amber-300" />
-          <span class="text-xs font-bold text-amber-600 dark:text-amber-300 uppercase tracking-wide">
-            Fichas disponibles: {{ userService.chips() }}
-          </span>
-        </div>
-        
-        <div
-          class="px-5 py-2.5 rounded-full text-xs font-bold tracking-widest uppercase
-                 bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-200
-                 border border-rose-200 dark:border-rose-800/50 shadow-sm"
-        >
-          ¡Muy pronto!
-        </div>
-      </div>
-    }
-
-  </main>
+                <div
+                    class="px-5 py-2.5 rounded-full text-xs font-bold tracking-widest uppercase bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-200 border border-rose-200 dark:border-rose-800/50 shadow-sm"
+                >
+                    ¡Muy pronto!
+                </div>
+            </div>
+        }
+    </main>
 </div>

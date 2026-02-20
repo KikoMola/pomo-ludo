@@ -2,18 +2,19 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  ElementRef,
   inject,
   OnDestroy,
   signal,
 } from '@angular/core';
 import { NgpButton } from 'ng-primitives/button';
-import { LucideAngularModule, Play, Pause, RotateCcw, Coffee, Brain, Sofa, Coins } from 'lucide-angular';
+import { LucideAngularModule, Play, Pause, RotateCcw, Coffee, Brain, Sofa, Coins, Pencil } from 'lucide-angular';
 import { interval, Subscription } from 'rxjs';
 import { UserService } from '../../../../core/services/user.service';
 
 export type PomodoroMode = 'focus' | 'shortBreak' | 'longBreak';
 
-const DURATIONS: Record<PomodoroMode, number> = {
+const DEFAULT_DURATIONS: Record<PomodoroMode, number> = {
   focus: 25 * 60,
   shortBreak: 5 * 60,
   longBreak: 15 * 60,
@@ -31,11 +32,15 @@ const CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS;
 })
 export class PomodoroTimerComponent implements OnDestroy {
   private readonly userService = inject(UserService);
+  private readonly elRef = inject(ElementRef);
 
   readonly mode = signal<PomodoroMode>('focus');
-  readonly timeLeft = signal<number>(DURATIONS['focus']);
+  readonly customDurations = signal<Record<PomodoroMode, number>>({ ...DEFAULT_DURATIONS });
+  readonly timeLeft = signal<number>(DEFAULT_DURATIONS['focus']);
   readonly isRunning = signal(false);
   readonly sessionsCompleted = signal(0);
+  readonly isEditing = signal(false);
+  readonly editMinutes = signal(25);
 
   private timerSub?: Subscription;
 
@@ -44,7 +49,7 @@ export class PomodoroTimerComponent implements OnDestroy {
   readonly CIRCUMFERENCE = CIRCUMFERENCE;
 
   readonly dashOffset = computed(() => {
-    const total = DURATIONS[this.mode()];
+    const total = this.customDurations()[this.mode()];
     return CIRCUMFERENCE * (1 - this.timeLeft() / total);
   });
 
@@ -87,6 +92,7 @@ export class PomodoroTimerComponent implements OnDestroy {
   readonly Brain = Brain;
   readonly Sofa = Sofa;
   readonly Coins = Coins;
+  readonly Pencil = Pencil;
 
   toggle(): void {
     if (this.isRunning()) {
@@ -98,13 +104,43 @@ export class PomodoroTimerComponent implements OnDestroy {
 
   setMode(mode: PomodoroMode): void {
     this.pause();
+    this.isEditing.set(false);
     this.mode.set(mode);
-    this.timeLeft.set(DURATIONS[mode]);
+    this.timeLeft.set(this.customDurations()[mode]);
   }
 
   reset(): void {
     this.pause();
-    this.timeLeft.set(DURATIONS[this.mode()]);
+    this.isEditing.set(false);
+    this.timeLeft.set(this.customDurations()[this.mode()]);
+  }
+
+  startEdit(): void {
+    if (this.isRunning()) return;
+    this.editMinutes.set(Math.round(this.customDurations()[this.mode()] / 60));
+    this.isEditing.set(true);
+    setTimeout(() => {
+      const input = this.elRef.nativeElement.querySelector('[data-edit-input]') as HTMLInputElement;
+      input?.focus();
+      input?.select();
+    });
+  }
+
+  confirmEditFromEvent(event: Event): void {
+    const value = +(event.target as HTMLInputElement).value;
+    this.confirmEdit(value);
+  }
+
+  confirmEdit(minutes: number): void {
+    if (!this.isEditing()) return;
+    const clamped = Math.max(1, Math.min(99, minutes || 1));
+    this.customDurations.update(d => ({ ...d, [this.mode()]: clamped * 60 }));
+    this.timeLeft.set(clamped * 60);
+    this.isEditing.set(false);
+  }
+
+  cancelEdit(): void {
+    this.isEditing.set(false);
   }
 
   private start(): void {

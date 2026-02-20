@@ -54,15 +54,61 @@
 
       <!-- Time overlay -->
       <div class="absolute flex flex-col items-center gap-1">
-        <span
-          class="text-7xl font-black tabular-nums tracking-tighter text-stone-800 dark:text-stone-100"
-          aria-live="off"
-        >
-          {{ minutes() }}:{{ seconds() }}
-        </span>
-        <span class="text-base font-bold uppercase tracking-[0.2em] text-stone-400 dark:text-stone-500">
-          {{ modeLabel() }}
-        </span>
+        @if (isEditing()) {
+          <div class="flex flex-col items-center gap-3">
+            <div class="flex items-baseline gap-2">
+              <input
+                data-edit-input
+                type="number"
+                min="1"
+                max="99"
+                [value]="editMinutes()"
+                (keydown.enter)="confirmEditFromEvent($event)"
+                (keydown.escape)="cancelEdit()"
+                (blur)="confirmEditFromEvent($event)"
+                class="w-28 text-7xl font-black tabular-nums tracking-tighter text-center
+                       bg-transparent outline-none border-b-4
+                       text-stone-800 dark:text-stone-100
+                       [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                [class.border-orange-400]="mode() === 'focus'"
+                [class.border-emerald-400]="mode() === 'shortBreak'"
+                [class.border-sky-400]="mode() === 'longBreak'"
+              />
+              <span class="text-2xl font-bold text-stone-400 dark:text-stone-500">min</span>
+            </div>
+            <span class="text-xs text-stone-400 dark:text-stone-500">
+              Enter confirma &middot; Esc cancela
+            </span>
+          </div>
+        } @else {
+          <button
+            type="button"
+            (click)="startEdit()"
+            [disabled]="isRunning()"
+            class="flex flex-col items-center gap-1 group bg-transparent border-none outline-none focus-visible:ring-2 focus-visible:ring-stone-400 rounded-lg"
+            [class.cursor-pointer]="!isRunning()"
+            [class.cursor-default]="isRunning()"
+            [attr.aria-label]="'Tiempo: ' + minutes() + ':' + seconds() + (isRunning() ? '' : '. Clic para editar duración')"
+          >
+            <span
+              class="text-7xl font-black tabular-nums tracking-tighter text-stone-800 dark:text-stone-100"
+              aria-live="off"
+            >
+              {{ minutes() }}:{{ seconds() }}
+            </span>
+            <span class="text-base font-bold uppercase tracking-[0.2em] text-stone-400 dark:text-stone-500 flex items-center gap-1.5">
+              {{ modeLabel() }}
+              @if (!isRunning()) {
+                <lucide-angular
+                  [img]="Pencil"
+                  [size]="12"
+                  strokeWidth="2.5"
+                  class="opacity-0 group-hover:opacity-50 transition-opacity duration-200"
+                />
+              }
+            </span>
+          </button>
+        }
       </div>
     </div>
   </div>

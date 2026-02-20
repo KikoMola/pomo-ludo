@@ -1,23 +1,36 @@
 <article
-    class="relative flex flex-col justify-between w-32 h-44 sm:w-36 sm:h-52 bg-white rounded-2xl border border-stone-200 shadow-xl shadow-stone-400/20 p-2.5 select-none"
-    [class.text-red-600]="isRed()"
-    [class.text-stone-900]="!isRed()"
-    [attr.aria-label]="value() + ' de ' + card().suit"
+    [class]="articleClass()"
+    [attr.aria-label]="faceDown() ? 'Carta boca abajo' : (value() + ' de ' + card().suit)"
 >
-    <!-- Top-left corner -->
-    <div class="flex flex-col items-center leading-none w-7">
-        <span class="text-lg font-black leading-none">{{ value() }}</span>
-        <img [src]="suitIcon()" alt="" aria-hidden="true" class="w-4 h-4 mt-0.5" />
-    </div>
+    @if (faceDown()) {
+        <!-- Card back -->
+        <div class="absolute inset-0 flex items-center justify-center p-2">
+            <div
+                class="w-full h-full rounded-xl border border-indigo-400/20 flex items-center justify-center"
+            >
+                <div class="grid grid-cols-3 gap-1.5">
+                    @for (_ of dotArray; track $index) {
+                        <div class="w-2 h-2 bg-indigo-300/40 rounded-full"></div>
+                    }
+                </div>
+            </div>
+        </div>
+    } @else {
+        <!-- Top-left corner -->
+        <div [class]="cornerClass()">
+            <span [class]="valueClass()">{{ value() }}</span>
+            <img [src]="suitIcon()" alt="" aria-hidden="true" [class]="suitSmallClass()" />
+        </div>
 
-    <!-- Center suit -->
-    <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <img [src]="suitIcon()" alt="" aria-hidden="true" class="w-14 h-14 sm:w-16 sm:h-16 opacity-15" />
-    </div>
+        <!-- Center suit (large, faded) -->
+        <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <img [src]="suitIcon()" alt="" aria-hidden="true" [class]="suitLargeClass()" />
+        </div>
 
-    <!-- Bottom-right corner (rotated 180°) -->
-    <div class="flex flex-col items-center leading-none w-7 self-end rotate-180">
-        <span class="text-lg font-black leading-none">{{ value() }}</span>
-        <img [src]="suitIcon()" alt="" aria-hidden="true" class="w-4 h-4 mt-0.5" />
-    </div>
+        <!-- Bottom-right corner (rotated 180°) -->
+        <div [class]="cornerClass() + ' self-end rotate-180'">
+            <span [class]="valueClass()">{{ value() }}</span>
+            <img [src]="suitIcon()" alt="" aria-hidden="true" [class]="suitSmallClass()" />
+        </div>
+    }
 </article>

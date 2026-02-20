@@ -1,26 +1,285 @@
-<div class="flex flex-col items-center gap-8 w-full">
-    <!-- Card display area -->
-    <div class="flex items-center justify-center h-56 sm:h-64">
-        @if (currentCard()) {
-            <div class="animate-[fadeInScale_0.25s_ease-out]">
-                <app-card [card]="currentCard()!" />
-            </div>
-        } @else {
-            <div
-                class="flex items-center justify-center w-32 h-44 sm:w-36 sm:h-52 rounded-2xl border-2 border-dashed border-stone-300 dark:border-stone-700 text-stone-400 dark:text-stone-600 text-sm font-semibold"
-            >
-                Sin carta
-            </div>
-        }
-    </div>
+<div class="w-full max-w-2xl mx-auto flex flex-col gap-4 pb-4">
 
-    <!-- Deal button -->
-    <button
-        ngpButton
-        (click)="dealCard()"
-        class="flex items-center gap-2.5 px-6 py-3 rounded-2xl bg-rose-600 hover:bg-rose-500 active:scale-95 text-white font-bold text-sm transition-all duration-200 shadow-lg shadow-rose-500/30 cursor-pointer"
-    >
-        <lucide-angular [img]="Shuffle" [size]="18" strokeWidth="2.5" />
-        Robar carta
-    </button>
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <!--  FASE: IDLE — Pantalla de bienvenida                         -->
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    @if (gameService.phase() === 'idle') {
+        <div
+            class="flex flex-col items-center gap-8 py-10 bg-white/60 dark:bg-stone-900/60 backdrop-blur-md rounded-3xl border border-white/40 dark:border-stone-700 shadow-lg p-8"
+        >
+            <div class="relative">
+                <div
+                    class="absolute inset-0 bg-rose-200/50 dark:bg-rose-900/40 rounded-3xl blur-xl"
+                ></div>
+                <div
+                    class="relative p-6 bg-rose-100 dark:bg-rose-900/30 rounded-3xl border border-rose-200/50 dark:border-rose-700/30"
+                >
+                    <lucide-angular
+                        [img]="Spade"
+                        [size]="52"
+                        strokeWidth="1.5"
+                        class="text-rose-500 dark:text-rose-300"
+                    />
+                </div>
+            </div>
+
+            <div class="text-center flex flex-col gap-2">
+                <h2 class="text-3xl font-black text-stone-800 dark:text-stone-100 tracking-tight">
+                    Blackjack
+                </h2>
+                <p class="text-stone-500 dark:text-stone-400 font-medium">
+                    Tienes
+                    <strong class="text-amber-600 dark:text-amber-400"
+                        >{{ userService.chips() }} fichas</strong
+                    >
+                    para apostar
+                </p>
+            </div>
+
+            <button
+                ngpButton
+                (click)="gameService.startBetting()"
+                class="flex items-center gap-2.5 px-7 py-3.5 rounded-2xl bg-rose-600 hover:bg-rose-500 active:scale-95 text-white font-bold text-sm transition-all duration-200 shadow-lg shadow-rose-500/30 cursor-pointer"
+            >
+                <lucide-angular [img]="Play" [size]="16" strokeWidth="2.5" />
+                Nueva partida
+            </button>
+        </div>
+    }
+
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <!--  FASE: BETTING — Selección de apuesta                        -->
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    @if (gameService.phase() === 'betting') {
+        <div
+            class="flex flex-col items-center gap-6 bg-white/60 dark:bg-stone-900/60 backdrop-blur-md rounded-3xl border border-white/40 dark:border-stone-700 shadow-lg p-6 sm:p-8"
+        >
+            <div class="text-center flex flex-col gap-1">
+                <h3 class="text-xl font-black text-stone-800 dark:text-stone-100">
+                    ¿Cuánto quieres apostar?
+                </h3>
+                <p class="text-sm text-stone-500 dark:text-stone-400 flex items-center justify-center gap-1.5">
+                    <lucide-angular
+                        [img]="Coins"
+                        [size]="14"
+                        strokeWidth="2.5"
+                        class="text-amber-500"
+                    />
+                    {{ userService.chips() }} fichas disponibles
+                </p>
+            </div>
+
+            <!-- Chip buttons -->
+            <div class="flex gap-4 flex-wrap justify-center">
+                @for (denom of CHIP_DENOMINATIONS; track denom) {
+                    <button
+                        ngpButton
+                        (click)="addToBet(denom)"
+                        [disabled]="userService.chips() < gameService.bet() + denom"
+                        class="flex flex-col items-center gap-1 cursor-pointer active:scale-90 transition-transform duration-150 disabled:opacity-40 disabled:cursor-not-allowed disabled:scale-100"
+                        [attr.aria-label]="'Añadir ' + denom + ' fichas'"
+                    >
+                        <app-chip [denomination]="denom" [size]="56" />
+                        <span class="text-xs font-bold text-stone-500 dark:text-stone-400"
+                            >+{{ denom }}</span
+                        >
+                    </button>
+                }
+            </div>
+
+            <!-- Apuesta acumulada -->
+            <div
+                class="flex items-center gap-3 px-5 py-3 rounded-2xl bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 min-w-48 justify-center"
+            >
+                <span class="text-sm font-semibold text-stone-500 dark:text-stone-400">Apuesta:</span>
+                <span class="text-2xl font-black text-stone-800 dark:text-stone-100">
+                    {{ gameService.bet() }}
+                </span>
+                <span class="text-sm font-semibold text-stone-500 dark:text-stone-400">fichas</span>
+            </div>
+
+            <!-- Acciones -->
+            <div class="flex gap-3">
+                <button
+                    ngpButton
+                    (click)="gameService.clearBet()"
+                    [disabled]="gameService.bet() === 0"
+                    class="flex items-center gap-2 px-5 py-2.5 rounded-2xl border border-stone-300 dark:border-stone-600 text-stone-600 dark:text-stone-300 font-bold text-sm hover:bg-stone-100 dark:hover:bg-stone-800 transition-all duration-200 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                    <lucide-angular [img]="RotateCcw" [size]="14" strokeWidth="2.5" />
+                    Limpiar
+                </button>
+                <button
+                    ngpButton
+                    (click)="gameService.deal()"
+                    [disabled]="gameService.bet() === 0"
+                    class="flex items-center gap-2 px-6 py-2.5 rounded-2xl bg-rose-600 hover:bg-rose-500 active:scale-95 text-white font-bold text-sm transition-all duration-200 shadow-lg shadow-rose-500/30 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:scale-100"
+                >
+                    <lucide-angular [img]="Play" [size]="14" strokeWidth="2.5" />
+                    Repartir
+                </button>
+            </div>
+        </div>
+    }
+
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <!--  FASES: PLAYING / RESULT — Mesa de juego                     -->
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    @if (gameService.phase() === 'playing' || gameService.phase() === 'result') {
+        <div
+            class="flex flex-col gap-0 bg-white/60 dark:bg-stone-900/60 backdrop-blur-md rounded-3xl border border-white/40 dark:border-stone-700 shadow-lg overflow-hidden"
+        >
+            <!-- Banner de resultado -->
+            @if (gameService.phase() === 'result' && resultConfig()) {
+                <div
+                    [class]="
+                        'flex flex-col items-center gap-1 px-6 py-4 border-b text-center animate-[fadeInScale_0.3s_ease-out] ' +
+                        resultConfig()!.bannerClass
+                    "
+                >
+                    <p class="text-xl font-black tracking-tight">{{ resultConfig()!.label }}</p>
+                    <p class="text-sm font-bold opacity-90">{{ resultConfig()!.detail }}</p>
+                    <p class="text-xs opacity-60 font-medium">{{ gameService.message() }}</p>
+                </div>
+            }
+
+            <!-- Área del crupier -->
+            <div class="flex flex-col gap-3 p-5 sm:p-6">
+                <div class="flex items-center justify-between">
+                    <span
+                        class="text-xs font-black uppercase tracking-widest text-stone-400 dark:text-stone-500"
+                        >Crupier</span
+                    >
+                    <span
+                        class="text-sm font-black text-stone-700 dark:text-stone-200 tabular-nums"
+                    >
+                        @if (!gameService.dealerRevealed()) {
+                            {{ gameService.dealerScore() }}&thinsp;+&thinsp;?
+                        } @else {
+                            {{ gameService.dealerScore() }}
+                            @if (gameService.dealerScore() > 21) {
+                                <span class="text-red-500 ml-1">¡Pasado!</span>
+                            }
+                        }
+                    </span>
+                </div>
+                <div class="flex gap-2 flex-wrap min-h-20">
+                    @for (card of gameService.dealerCards(); track $index) {
+                        <div class="animate-[fadeInScale_0.2s_ease-out]">
+                            <app-card
+                                [card]="card"
+                                [faceDown]="$index === 1 && !gameService.dealerRevealed()"
+                                [compact]="true"
+                            />
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="h-px bg-stone-100 dark:bg-stone-800 mx-5"></div>
+
+            <!-- Área del jugador -->
+            <div class="flex flex-col gap-3 p-5 sm:p-6">
+                <div class="flex items-center justify-between">
+                    <span
+                        class="text-xs font-black uppercase tracking-widest text-stone-400 dark:text-stone-500"
+                        >Tú</span
+                    >
+                    <span [class]="playerScoreClass()">
+                        {{ gameService.playerScore() }}
+                        @if (gameService.playerScore() === 21 && gameService.playerCards().length === 2) {
+                            <span class="text-emerald-500 ml-1">Blackjack!</span>
+                        } @else if (gameService.playerScore() > 21) {
+                            <span class="ml-1">¡Pasado!</span>
+                        }
+                    </span>
+                </div>
+                <div class="flex gap-2 flex-wrap min-h-20">
+                    @for (card of gameService.playerCards(); track $index) {
+                        <div class="animate-[fadeInScale_0.2s_ease-out]">
+                            <app-card [card]="card" [compact]="true" />
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="h-px bg-stone-100 dark:bg-stone-800 mx-5"></div>
+
+            <!-- Barra inferior: apuesta + acciones -->
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-3 p-5 sm:p-6">
+                <!-- Apuesta actual -->
+                <div
+                    class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700/40"
+                >
+                    <lucide-angular
+                        [img]="Coins"
+                        [size]="14"
+                        strokeWidth="2.5"
+                        class="text-amber-500"
+                    />
+                    <span class="text-xs font-bold text-amber-700 dark:text-amber-300">
+                        Apuesta: {{ gameService.bet() }} fichas
+                    </span>
+                </div>
+
+                <!-- Botones de acción -->
+                @if (gameService.phase() === 'playing') {
+                    <div class="flex gap-2 flex-wrap justify-center">
+                        <!-- Carta (Hit) -->
+                        <button
+                            ngpButton
+                            (click)="gameService.hit()"
+                            class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 active:scale-95 text-white font-bold text-sm transition-all duration-150 shadow-md shadow-rose-500/30 cursor-pointer"
+                        >
+                            <lucide-angular [img]="Plus" [size]="14" strokeWidth="2.5" />
+                            Carta
+                        </button>
+
+                        <!-- Plantarse (Stand) -->
+                        <button
+                            ngpButton
+                            (click)="gameService.stand()"
+                            class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-stone-700 hover:bg-stone-600 dark:bg-stone-600 dark:hover:bg-stone-500 active:scale-95 text-white font-bold text-sm transition-all duration-150 shadow-md cursor-pointer"
+                        >
+                            <lucide-angular [img]="Hand" [size]="14" strokeWidth="2.5" />
+                            Plantarse
+                        </button>
+
+                        <!-- Doblar (Double Down) -->
+                        <button
+                            ngpButton
+                            (click)="gameService.doubleDown()"
+                            [disabled]="!canDoubleDown()"
+                            class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 active:scale-95 text-white font-bold text-sm transition-all duration-150 shadow-md shadow-amber-500/30 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:scale-100"
+                        >
+                            <lucide-angular [img]="TrendingUp" [size]="14" strokeWidth="2.5" />
+                            Doblar (+{{ gameService.bet() }})
+                        </button>
+                    </div>
+                }
+
+                @if (gameService.phase() === 'result') {
+                    <div class="flex gap-2 flex-wrap justify-center">
+                        @if (userService.chips() > 0) {
+                            <button
+                                ngpButton
+                                (click)="gameService.startBetting()"
+                                class="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 active:scale-95 text-white font-bold text-sm transition-all duration-150 shadow-md shadow-rose-500/30 cursor-pointer"
+                            >
+                                <lucide-angular [img]="RotateCcw" [size]="14" strokeWidth="2.5" />
+                                Jugar de nuevo
+                            </button>
+                        } @else {
+                            <p
+                                class="text-xs font-semibold text-stone-500 dark:text-stone-400 text-center"
+                            >
+                                Sin fichas. ¡Gana más con el Pomodoro! 🍅
+                            </p>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    }
 </div>
+

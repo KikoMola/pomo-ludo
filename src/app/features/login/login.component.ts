@@ -35,7 +35,7 @@ export class LoginComponent {
 
     onSubmit(): void {
         if (this.form.invalid) return;
-        this.userService.setName(this.form.controls.name.value.trim());
+        this.userService.login(this.form.controls.name.value.trim());
         this.router.navigate(['/dashboard']);
     }
 }

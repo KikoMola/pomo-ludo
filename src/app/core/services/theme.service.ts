@@ -1,21 +1,19 @@
-import { effect, Injectable, signal } from '@angular/core';
+import { computed, effect, inject, Injectable } from '@angular/core';
+import { UserService } from './user.service';
 
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
-    readonly isDark = signal<boolean>(false);
+    private readonly userService = inject(UserService);
+
+    readonly isDark = computed(() => this.userService.theme() === 'dark');
 
     constructor() {
-        const saved = localStorage.getItem('pomo-ludo-theme');
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        this.isDark.set(saved ? saved === 'dark' : prefersDark);
-
         effect(() => {
             document.documentElement.classList.toggle('dark', this.isDark());
-            localStorage.setItem('pomo-ludo-theme', this.isDark() ? 'dark' : 'light');
         });
     }
 
     toggle(): void {
-        this.isDark.update(v => !v);
+        this.userService.setTheme(this.isDark() ? 'light' : 'dark');
     }
 }

@@ -1,33 +1,33 @@
-<div class="w-full max-w-2xl mx-auto flex flex-col gap-4 pb-4">
+<div class="w-full flex-1 flex flex-col gap-4">
 
     <!-- ══════════════════════════════════════════════════════════════ -->
     <!--  FASE: IDLE — Pantalla de bienvenida                         -->
     <!-- ══════════════════════════════════════════════════════════════ -->
     @if (gameService.phase() === 'idle') {
         <div
-            class="flex flex-col items-center gap-8 py-10 bg-white/60 dark:bg-stone-900/60 backdrop-blur-md rounded-3xl border border-white/40 dark:border-stone-700 shadow-lg p-8"
+            class="flex flex-1 flex-col items-center justify-center gap-10 bg-white/60 dark:bg-stone-900/60 backdrop-blur-md rounded-3xl border border-white/40 dark:border-stone-700 shadow-lg p-10 sm:p-16"
         >
             <div class="relative">
                 <div
-                    class="absolute inset-0 bg-rose-200/50 dark:bg-rose-900/40 rounded-3xl blur-xl"
+                    class="absolute inset-0 bg-rose-200/50 dark:bg-rose-900/40 rounded-3xl blur-2xl"
                 ></div>
                 <div
-                    class="relative p-6 bg-rose-100 dark:bg-rose-900/30 rounded-3xl border border-rose-200/50 dark:border-rose-700/30"
+                    class="relative p-8 bg-rose-100 dark:bg-rose-900/30 rounded-3xl border border-rose-200/50 dark:border-rose-700/30"
                 >
                     <lucide-angular
                         [img]="Spade"
-                        [size]="52"
+                        [size]="80"
                         strokeWidth="1.5"
                         class="text-rose-500 dark:text-rose-300"
                     />
                 </div>
             </div>
 
-            <div class="text-center flex flex-col gap-2">
-                <h2 class="text-3xl font-black text-stone-800 dark:text-stone-100 tracking-tight">
+            <div class="text-center flex flex-col gap-3">
+                <h2 class="text-5xl font-black text-stone-800 dark:text-stone-100 tracking-tight">
                     Blackjack
                 </h2>
-                <p class="text-stone-500 dark:text-stone-400 font-medium">
+                <p class="text-lg text-stone-500 dark:text-stone-400 font-medium">
                     Tienes
                     <strong class="text-amber-600 dark:text-amber-400"
                         >{{ userService.chips() }} fichas</strong
@@ -39,9 +39,9 @@
             <button
                 ngpButton
                 (click)="gameService.startBetting()"
-                class="flex items-center gap-2.5 px-7 py-3.5 rounded-2xl bg-rose-600 hover:bg-rose-500 active:scale-95 text-white font-bold text-sm transition-all duration-200 shadow-lg shadow-rose-500/30 cursor-pointer"
+                class="flex items-center gap-3 px-10 py-4 rounded-2xl bg-rose-600 hover:bg-rose-500 active:scale-95 text-white font-bold text-base transition-all duration-200 shadow-lg shadow-rose-500/30 cursor-pointer"
             >
-                <lucide-angular [img]="Play" [size]="16" strokeWidth="2.5" />
+                <lucide-angular [img]="Play" [size]="18" strokeWidth="2.5" />
                 Nueva partida
             </button>
         </div>
@@ -52,10 +52,10 @@
     <!-- ══════════════════════════════════════════════════════════════ -->
     @if (gameService.phase() === 'betting') {
         <div
-            class="flex flex-col items-center gap-6 bg-white/60 dark:bg-stone-900/60 backdrop-blur-md rounded-3xl border border-white/40 dark:border-stone-700 shadow-lg p-6 sm:p-8"
+            class="flex flex-1 flex-col items-center justify-center gap-8 bg-white/60 dark:bg-stone-900/60 backdrop-blur-md rounded-3xl border border-white/40 dark:border-stone-700 shadow-lg p-8 sm:p-14"
         >
-            <div class="text-center flex flex-col gap-1">
-                <h3 class="text-xl font-black text-stone-800 dark:text-stone-100">
+            <div class="text-center flex flex-col gap-2">
+                <h3 class="text-3xl font-black text-stone-800 dark:text-stone-100">
                     ¿Cuánto quieres apostar?
                 </h3>
                 <p class="text-sm text-stone-500 dark:text-stone-400 flex items-center justify-center gap-1.5">
@@ -70,17 +70,17 @@
             </div>
 
             <!-- Chip buttons -->
-            <div class="flex gap-4 flex-wrap justify-center">
+            <div class="flex gap-6 sm:gap-10 flex-wrap justify-center">
                 @for (denom of CHIP_DENOMINATIONS; track denom) {
                     <button
                         ngpButton
                         (click)="addToBet(denom)"
                         [disabled]="userService.chips() < gameService.bet() + denom"
-                        class="flex flex-col items-center gap-1 cursor-pointer active:scale-90 transition-transform duration-150 disabled:opacity-40 disabled:cursor-not-allowed disabled:scale-100"
+                        class="flex flex-col items-center gap-2 cursor-pointer active:scale-90 transition-transform duration-150 disabled:opacity-40 disabled:cursor-not-allowed disabled:scale-100"
                         [attr.aria-label]="'Añadir ' + denom + ' fichas'"
                     >
-                        <app-chip [denomination]="denom" [size]="56" />
-                        <span class="text-xs font-bold text-stone-500 dark:text-stone-400"
+                        <app-chip [denomination]="denom" [size]="80" />
+                        <span class="text-sm font-bold text-stone-500 dark:text-stone-400"
                             >+{{ denom }}</span
                         >
                     </button>
@@ -89,13 +89,13 @@
 
             <!-- Apuesta acumulada -->
             <div
-                class="flex items-center gap-3 px-5 py-3 rounded-2xl bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 min-w-48 justify-center"
+                class="flex items-center gap-4 px-8 py-4 rounded-2xl bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 min-w-64 justify-center"
             >
-                <span class="text-sm font-semibold text-stone-500 dark:text-stone-400">Apuesta:</span>
-                <span class="text-2xl font-black text-stone-800 dark:text-stone-100">
+                <span class="text-base font-semibold text-stone-500 dark:text-stone-400">Apuesta:</span>
+                <span class="text-4xl font-black text-stone-800 dark:text-stone-100">
                     {{ gameService.bet() }}
                 </span>
-                <span class="text-sm font-semibold text-stone-500 dark:text-stone-400">fichas</span>
+                <span class="text-base font-semibold text-stone-500 dark:text-stone-400">fichas</span>
             </div>
 
             <!-- Acciones -->
@@ -104,7 +104,7 @@
                     ngpButton
                     (click)="gameService.clearBet()"
                     [disabled]="gameService.bet() === 0"
-                    class="flex items-center gap-2 px-5 py-2.5 rounded-2xl border border-stone-300 dark:border-stone-600 text-stone-600 dark:text-stone-300 font-bold text-sm hover:bg-stone-100 dark:hover:bg-stone-800 transition-all duration-200 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                    class="flex items-center gap-2 px-6 py-3 rounded-2xl border border-stone-300 dark:border-stone-600 text-stone-600 dark:text-stone-300 font-bold text-sm hover:bg-stone-100 dark:hover:bg-stone-800 transition-all duration-200 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                     <lucide-angular [img]="RotateCcw" [size]="14" strokeWidth="2.5" />
                     Limpiar
@@ -113,9 +113,9 @@
                     ngpButton
                     (click)="gameService.deal()"
                     [disabled]="gameService.bet() === 0"
-                    class="flex items-center gap-2 px-6 py-2.5 rounded-2xl bg-rose-600 hover:bg-rose-500 active:scale-95 text-white font-bold text-sm transition-all duration-200 shadow-lg shadow-rose-500/30 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:scale-100"
+                    class="flex items-center gap-2 px-8 py-3 rounded-2xl bg-rose-600 hover:bg-rose-500 active:scale-95 text-white font-bold text-base transition-all duration-200 shadow-lg shadow-rose-500/30 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:scale-100"
                 >
-                    <lucide-angular [img]="Play" [size]="14" strokeWidth="2.5" />
+                    <lucide-angular [img]="Play" [size]="16" strokeWidth="2.5" />
                     Repartir
                 </button>
             </div>
@@ -127,86 +127,88 @@
     <!-- ══════════════════════════════════════════════════════════════ -->
     @if (gameService.phase() === 'playing' || gameService.phase() === 'result') {
         <div
-            class="flex flex-col gap-0 bg-white/60 dark:bg-stone-900/60 backdrop-blur-md rounded-3xl border border-white/40 dark:border-stone-700 shadow-lg overflow-hidden"
+            class="flex flex-1 flex-col bg-white/60 dark:bg-stone-900/60 backdrop-blur-md rounded-3xl border border-white/40 dark:border-stone-700 shadow-lg overflow-hidden"
         >
             <!-- Banner de resultado -->
             @if (gameService.phase() === 'result' && resultConfig()) {
                 <div
                     [class]="
-                        'flex flex-col items-center gap-1 px-6 py-4 border-b text-center animate-[fadeInScale_0.3s_ease-out] ' +
+                        'flex flex-col items-center gap-1 px-6 py-5 border-b text-center animate-[fadeInScale_0.3s_ease-out] ' +
                         resultConfig()!.bannerClass
                     "
                 >
-                    <p class="text-xl font-black tracking-tight">{{ resultConfig()!.label }}</p>
+                    <p class="text-2xl font-black tracking-tight">{{ resultConfig()!.label }}</p>
                     <p class="text-sm font-bold opacity-90">{{ resultConfig()!.detail }}</p>
                     <p class="text-xs opacity-60 font-medium">{{ gameService.message() }}</p>
                 </div>
             }
 
-            <!-- Área del crupier -->
-            <div class="flex flex-col gap-3 p-5 sm:p-6">
-                <div class="flex items-center justify-between">
-                    <span
-                        class="text-xs font-black uppercase tracking-widest text-stone-400 dark:text-stone-500"
-                        >Crupier</span
-                    >
-                    <span
-                        class="text-sm font-black text-stone-700 dark:text-stone-200 tabular-nums"
-                    >
-                        @if (!gameService.dealerRevealed()) {
-                            {{ gameService.dealerScore() }}&thinsp;+&thinsp;?
-                        } @else {
-                            {{ gameService.dealerScore() }}
-                            @if (gameService.dealerScore() > 21) {
-                                <span class="text-red-500 ml-1">¡Pasado!</span>
+            <!-- Mesa: dos columnas en lg+ -->
+            <div class="flex-1 grid grid-cols-1 lg:grid-cols-2">
+
+                <!-- Área del crupier -->
+                <div class="flex flex-col gap-4 p-6 sm:p-8 lg:border-r border-stone-100 dark:border-stone-800">
+                    <div class="flex items-center justify-between">
+                        <span
+                            class="text-xs font-black uppercase tracking-widest text-stone-400 dark:text-stone-500"
+                            >Crupier</span
+                        >
+                        <span
+                            class="text-lg font-black text-stone-700 dark:text-stone-200 tabular-nums"
+                        >
+                            @if (!gameService.dealerRevealed()) {
+                                {{ gameService.dealerScore() }}&thinsp;+&thinsp;?
+                            } @else {
+                                {{ gameService.dealerScore() }}
+                                @if (gameService.dealerScore() > 21) {
+                                    <span class="text-red-500 ml-1 text-sm">¡Pasado!</span>
+                                }
                             }
+                        </span>
+                    </div>
+                    <div class="flex gap-3 flex-wrap flex-1 content-start">
+                        @for (card of gameService.dealerCards(); track $index) {
+                            <div class="animate-[fadeInScale_0.2s_ease-out]">
+                                <app-card
+                                    [card]="card"
+                                    [faceDown]="$index === 1 && !gameService.dealerRevealed()"
+                                />
+                            </div>
                         }
-                    </span>
+                    </div>
                 </div>
-                <div class="flex gap-2 flex-wrap min-h-20">
-                    @for (card of gameService.dealerCards(); track $index) {
-                        <div class="animate-[fadeInScale_0.2s_ease-out]">
-                            <app-card
-                                [card]="card"
-                                [faceDown]="$index === 1 && !gameService.dealerRevealed()"
-                                [compact]="true"
-                            />
-                        </div>
-                    }
+
+                <!-- Separador horizontal solo en mobile -->
+                <div class="h-px bg-stone-100 dark:bg-stone-800 lg:hidden mx-6"></div>
+
+                <!-- Área del jugador -->
+                <div class="flex flex-col gap-4 p-6 sm:p-8">
+                    <div class="flex items-center justify-between">
+                        <span
+                            class="text-xs font-black uppercase tracking-widest text-stone-400 dark:text-stone-500"
+                            >Tú</span
+                        >
+                        <span [class]="playerScoreClass()">
+                            {{ gameService.playerScore() }}
+                            @if (gameService.playerScore() === 21 && gameService.playerCards().length === 2) {
+                                <span class="text-emerald-500 ml-1 text-sm">Blackjack!</span>
+                            } @else if (gameService.playerScore() > 21) {
+                                <span class="ml-1 text-sm">¡Pasado!</span>
+                            }
+                        </span>
+                    </div>
+                    <div class="flex gap-3 flex-wrap flex-1 content-start">
+                        @for (card of gameService.playerCards(); track $index) {
+                            <div class="animate-[fadeInScale_0.2s_ease-out]">
+                                <app-card [card]="card" />
+                            </div>
+                        }
+                    </div>
                 </div>
             </div>
-
-            <div class="h-px bg-stone-100 dark:bg-stone-800 mx-5"></div>
-
-            <!-- Área del jugador -->
-            <div class="flex flex-col gap-3 p-5 sm:p-6">
-                <div class="flex items-center justify-between">
-                    <span
-                        class="text-xs font-black uppercase tracking-widest text-stone-400 dark:text-stone-500"
-                        >Tú</span
-                    >
-                    <span [class]="playerScoreClass()">
-                        {{ gameService.playerScore() }}
-                        @if (gameService.playerScore() === 21 && gameService.playerCards().length === 2) {
-                            <span class="text-emerald-500 ml-1">Blackjack!</span>
-                        } @else if (gameService.playerScore() > 21) {
-                            <span class="ml-1">¡Pasado!</span>
-                        }
-                    </span>
-                </div>
-                <div class="flex gap-2 flex-wrap min-h-20">
-                    @for (card of gameService.playerCards(); track $index) {
-                        <div class="animate-[fadeInScale_0.2s_ease-out]">
-                            <app-card [card]="card" [compact]="true" />
-                        </div>
-                    }
-                </div>
-            </div>
-
-            <div class="h-px bg-stone-100 dark:bg-stone-800 mx-5"></div>
 
             <!-- Barra inferior: apuesta + acciones -->
-            <div class="flex flex-col sm:flex-row items-center justify-between gap-3 p-5 sm:p-6">
+            <div class="border-t border-stone-100 dark:border-stone-800 flex flex-col sm:flex-row items-center justify-between gap-3 p-5 sm:p-6">
                 <!-- Apuesta actual -->
                 <div
                     class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700/40"
@@ -229,7 +231,7 @@
                         <button
                             ngpButton
                             (click)="gameService.hit()"
-                            class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 active:scale-95 text-white font-bold text-sm transition-all duration-150 shadow-md shadow-rose-500/30 cursor-pointer"
+                            class="flex items-center gap-2 px-5 py-3 rounded-xl bg-rose-600 hover:bg-rose-500 active:scale-95 text-white font-bold text-sm transition-all duration-150 shadow-md shadow-rose-500/30 cursor-pointer"
                         >
                             <lucide-angular [img]="Plus" [size]="14" strokeWidth="2.5" />
                             Carta
@@ -239,7 +241,7 @@
                         <button
                             ngpButton
                             (click)="gameService.stand()"
-                            class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-stone-700 hover:bg-stone-600 dark:bg-stone-600 dark:hover:bg-stone-500 active:scale-95 text-white font-bold text-sm transition-all duration-150 shadow-md cursor-pointer"
+                            class="flex items-center gap-2 px-5 py-3 rounded-xl bg-stone-700 hover:bg-stone-600 dark:bg-stone-600 dark:hover:bg-stone-500 active:scale-95 text-white font-bold text-sm transition-all duration-150 shadow-md cursor-pointer"
                         >
                             <lucide-angular [img]="Hand" [size]="14" strokeWidth="2.5" />
                             Plantarse
@@ -250,7 +252,7 @@
                             ngpButton
                             (click)="gameService.doubleDown()"
                             [disabled]="!canDoubleDown()"
-                            class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 active:scale-95 text-white font-bold text-sm transition-all duration-150 shadow-md shadow-amber-500/30 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:scale-100"
+                            class="flex items-center gap-2 px-5 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 active:scale-95 text-white font-bold text-sm transition-all duration-150 shadow-md shadow-amber-500/30 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:scale-100"
                         >
                             <lucide-angular [img]="TrendingUp" [size]="14" strokeWidth="2.5" />
                             Doblar (+{{ gameService.bet() }})
@@ -264,7 +266,7 @@
                             <button
                                 ngpButton
                                 (click)="gameService.startBetting()"
-                                class="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 active:scale-95 text-white font-bold text-sm transition-all duration-150 shadow-md shadow-rose-500/30 cursor-pointer"
+                                class="flex items-center gap-2 px-6 py-3 rounded-xl bg-rose-600 hover:bg-rose-500 active:scale-95 text-white font-bold text-sm transition-all duration-150 shadow-md shadow-rose-500/30 cursor-pointer"
                             >
                                 <lucide-angular [img]="RotateCcw" [size]="14" strokeWidth="2.5" />
                                 Jugar de nuevo

@@ -22,6 +22,13 @@ export class DashboardComponent {
 
     readonly activeSection = signal<Section>('pomodoro');
 
+    readonly mainClass = computed(() => {
+        const base = 'flex-1 flex flex-col min-h-[calc(100vh-80px)]';
+        return this.activeSection() === 'blackjack'
+            ? `${base} p-4 sm:p-6 items-stretch`
+            : `${base} p-4 sm:p-8 items-center justify-center`;
+    });
+
     private readonly tabBase =
         'flex items-center gap-2.5 px-4 py-2.5 sm:px-5 sm:py-3 rounded-2xl text-sm font-bold transition-all duration-300 cursor-pointer select-none';
 

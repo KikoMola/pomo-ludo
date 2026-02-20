@@ -1,0 +1,26 @@
+<div class="flex flex-col items-center gap-8 w-full">
+    <!-- Card display area -->
+    <div class="flex items-center justify-center h-56 sm:h-64">
+        @if (currentCard()) {
+            <div class="animate-[fadeInScale_0.25s_ease-out]">
+                <app-card [card]="currentCard()!" />
+            </div>
+        } @else {
+            <div
+                class="flex items-center justify-center w-32 h-44 sm:w-36 sm:h-52 rounded-2xl border-2 border-dashed border-stone-300 dark:border-stone-700 text-stone-400 dark:text-stone-600 text-sm font-semibold"
+            >
+                Sin carta
+            </div>
+        }
+    </div>
+
+    <!-- Deal button -->
+    <button
+        ngpButton
+        (click)="dealCard()"
+        class="flex items-center gap-2.5 px-6 py-3 rounded-2xl bg-rose-600 hover:bg-rose-500 active:scale-95 text-white font-bold text-sm transition-all duration-200 shadow-lg shadow-rose-500/30 cursor-pointer"
+    >
+        <lucide-angular [img]="Shuffle" [size]="18" strokeWidth="2.5" />
+        Robar carta
+    </button>
+</div>

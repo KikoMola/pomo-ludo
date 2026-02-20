@@ -5,13 +5,14 @@ import { LucideAngularModule, Coffee, Spade, Sun, Moon, Coins, Timer, LogOut, Bo
 import { UserService } from '../../core/services/user.service';
 import { ThemeService } from '../../core/services/theme.service';
 import { PomodoroTimerComponent } from './components/pomodoro-timer/pomodoro-timer.component';
+import { BlackjackComponent } from './components/blackjack/blackjack.component';
 
 type Section = 'pomodoro' | 'blackjack';
 
 @Component({
     selector: 'app-dashboard',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [NgpButton, LucideAngularModule, PomodoroTimerComponent],
+    imports: [NgpButton, LucideAngularModule, PomodoroTimerComponent, BlackjackComponent],
     templateUrl: './dashboard.component.html',
 })
 export class DashboardComponent {

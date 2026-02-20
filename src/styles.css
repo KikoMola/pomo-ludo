@@ -48,3 +48,14 @@ html.dark body {
     background-color: var(--color-cozy-cream-dark);
     color: #e7e5e4; /* Stone 200 */
 }
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.85);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}

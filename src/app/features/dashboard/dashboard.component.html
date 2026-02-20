@@ -103,49 +103,7 @@
         }
 
         @if (activeSection() === 'blackjack') {
-            <!-- Placeholder Blackjack -->
-            <div
-                class="w-full max-w-md flex flex-col items-center gap-8 bg-white/60 dark:bg-stone-800/60 backdrop-blur-md border border-white/40 dark:border-stone-700 rounded-[2.5rem] p-8 sm:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-stone-950/40 text-center transform hover:scale-[1.02] transition-transform duration-500"
-            >
-                <div class="relative group">
-                    <div
-                        class="absolute inset-0 bg-rose-200/50 dark:bg-rose-900/40 rounded-3xl blur-xl group-hover:blur-2xl transition-all duration-500"
-                    ></div>
-                    <div
-                        class="relative p-6 bg-rose-100 dark:bg-rose-800/30 rounded-3xl shadow-inner border border-rose-200/50 dark:border-rose-700/30"
-                    >
-                        <lucide-angular
-                            [img]="Spade"
-                            [size]="56"
-                            strokeWidth="1.5"
-                            class="text-rose-500 dark:text-rose-300 drop-shadow-sm"
-                        />
-                    </div>
-                </div>
-
-                <div class="flex flex-col gap-3">
-                    <h2 class="text-3xl font-black text-stone-800 dark:text-stone-100 tracking-tight">Blackjack</h2>
-                    <p class="text-base text-stone-500 dark:text-stone-400 font-medium leading-relaxed max-w-xs mx-auto">
-                        La mesa de cartas se está puliendo.<br />
-                        Consigue <strong class="text-rose-500 dark:text-rose-400">fichas</strong> estudiando para jugar.
-                    </p>
-                </div>
-
-                <div
-                    class="flex items-center gap-2.5 px-5 py-2.5 rounded-2xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700/40 shadow-sm shadow-amber-100/50 dark:shadow-none"
-                >
-                    <lucide-angular [img]="Coins" [size]="16" strokeWidth="2.5" class="text-amber-500 dark:text-amber-300" />
-                    <span class="text-xs font-bold text-amber-600 dark:text-amber-300 uppercase tracking-wide">
-                        Fichas disponibles: {{ userService.chips() }}
-                    </span>
-                </div>
-
-                <div
-                    class="px-5 py-2.5 rounded-full text-xs font-bold tracking-widest uppercase bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-200 border border-rose-200 dark:border-rose-800/50 shadow-sm"
-                >
-                    ¡Muy pronto!
-                </div>
-            </div>
+            <app-blackjack />
         }
     </main>
 </div>

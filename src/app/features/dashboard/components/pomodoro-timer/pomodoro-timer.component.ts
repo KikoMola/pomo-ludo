@@ -15,22 +15,6 @@ const DEFAULT_DURATIONS: Record<PomodoroMode, number> = {
 const SESSIONS_BEFORE_LONG_BREAK = 4;
 const RING_RADIUS = 155;
 const CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS;
-const DURATIONS_LS_KEY = 'pomodoro_durations';
-
-function loadDurations(): Record<PomodoroMode, number> {
-    try {
-        const raw = localStorage.getItem(DURATIONS_LS_KEY);
-        if (!raw) return { ...DEFAULT_DURATIONS };
-        const parsed = JSON.parse(raw) as Record<PomodoroMode, number>;
-        return {
-            focus: parsed.focus ?? DEFAULT_DURATIONS.focus,
-            shortBreak: parsed.shortBreak ?? DEFAULT_DURATIONS.shortBreak,
-            longBreak: parsed.longBreak ?? DEFAULT_DURATIONS.longBreak,
-        };
-    } catch {
-        return { ...DEFAULT_DURATIONS };
-    }
-}
 
 @Component({
     selector: 'app-pomodoro-timer',
@@ -43,8 +27,8 @@ export class PomodoroTimerComponent implements OnDestroy {
     private readonly elRef = inject(ElementRef);
 
     readonly mode = signal<PomodoroMode>('focus');
-    readonly customDurations = signal<Record<PomodoroMode, number>>(loadDurations());
-    readonly timeLeft = signal<number>(loadDurations()['focus']);
+    readonly customDurations: ReturnType<typeof signal<Record<PomodoroMode, number>>>;
+    readonly timeLeft: ReturnType<typeof signal<number>>;
     readonly isRunning = signal(false);
     readonly sessionsCompleted = signal(0);
     readonly isEditing = signal(false);
@@ -56,8 +40,17 @@ export class PomodoroTimerComponent implements OnDestroy {
     private secWheelListener?: (e: WheelEvent) => void;
 
     constructor() {
+        const saved = this.userService.getPomodoroDurations();
+        const initialDurations: Record<PomodoroMode, number> = {
+            focus: saved?.['focus'] ?? DEFAULT_DURATIONS.focus,
+            shortBreak: saved?.['shortBreak'] ?? DEFAULT_DURATIONS.shortBreak,
+            longBreak: saved?.['longBreak'] ?? DEFAULT_DURATIONS.longBreak,
+        };
+        this.customDurations = signal(initialDurations);
+        this.timeLeft = signal(initialDurations.focus);
+
         effect(() => {
-            localStorage.setItem(DURATIONS_LS_KEY, JSON.stringify(this.customDurations()));
+            this.userService.savePomodoroDurations(this.customDurations());
         });
     }
 

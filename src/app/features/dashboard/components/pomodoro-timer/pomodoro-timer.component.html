@@ -198,10 +198,7 @@
                 @for (filled of sessionDots(); track $index) {
                     <div
                         class="flex-1 h-2 rounded-full transition-all duration-500"
-                        [class.bg-orange-400]="filled"
-                        [class.dark:bg-orange-500]="filled"
-                        [class.bg-stone-200]="!filled"
-                        [class.dark:bg-stone-700]="!filled"
+                        [class]="filled ? sessionDotFilledClass() : 'bg-stone-200 dark:bg-stone-700'"
                         [attr.aria-label]="'Sesión ' + ($index + 1) + (filled ? ' completada' : ' pendiente')"
                     ></div>
                 }

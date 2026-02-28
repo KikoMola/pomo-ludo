@@ -92,6 +92,12 @@ export class PomodoroTimerComponent implements OnDestroy {
         return 'text-sky-100 dark:text-sky-900/20';
     });
 
+    readonly sessionDotFilledClass = computed(() => {
+        if (this.mode() === 'focus') return 'bg-orange-400 dark:bg-orange-500';
+        if (this.mode() === 'shortBreak') return 'bg-emerald-400 dark:bg-emerald-500';
+        return 'bg-sky-400 dark:bg-sky-500';
+    });
+
     readonly sessionDots = computed(() =>
         Array.from(
             { length: SESSIONS_BEFORE_LONG_BREAK },

@@ -4,6 +4,7 @@ import { NgpButton } from 'ng-primitives/button';
 import { LucideAngularModule, Coffee, Spade, Sun, Moon, Coins, Timer, LogOut, BookOpen } from 'lucide-angular';
 import { UserService } from '../../core/services/user.service';
 import { ThemeService } from '../../core/services/theme.service';
+import { PomodoroStateService } from '../../core/services/pomodoro-state.service';
 import { PomodoroTimerComponent } from './components/pomodoro-timer/pomodoro-timer.component';
 import { BlackjackComponent } from './components/blackjack/blackjack.component';
 
@@ -18,6 +19,7 @@ type Section = 'pomodoro' | 'blackjack';
 export class DashboardComponent {
     readonly userService = inject(UserService);
     readonly themeService = inject(ThemeService);
+    private readonly pomodoroState = inject(PomodoroStateService);
     private readonly router = inject(Router);
 
     readonly activeSection = signal<Section>('pomodoro');
@@ -32,9 +34,30 @@ export class DashboardComponent {
     private readonly tabBase =
         'flex items-center gap-2.5 px-4 py-2.5 sm:px-5 sm:py-3 rounded-2xl text-sm font-bold transition-all duration-300 cursor-pointer select-none';
 
+    private readonly pomodoroActiveColors = computed(() => {
+        const mode = this.pomodoroState.mode();
+        if (mode === 'shortBreak') return 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-200 ring-2 ring-emerald-200 dark:ring-emerald-800';
+        if (mode === 'longBreak') return 'bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-200 ring-2 ring-sky-200 dark:ring-sky-800';
+        return 'bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-200 ring-2 ring-orange-200 dark:ring-orange-800';
+    });
+
+    readonly chipsBadgeClass = computed(() => {
+        const mode = this.pomodoroState.mode();
+        if (mode === 'shortBreak') return 'bg-emerald-100/60 dark:bg-emerald-900/40 border-emerald-200 dark:border-emerald-700/50 text-emerald-700 dark:text-emerald-200';
+        if (mode === 'longBreak') return 'bg-sky-100/60 dark:bg-sky-900/40 border-sky-200 dark:border-sky-700/50 text-sky-700 dark:text-sky-200';
+        return 'bg-amber-100/60 dark:bg-amber-900/40 border-amber-200 dark:border-amber-700/50 text-amber-700 dark:text-amber-200';
+    });
+
+    readonly chipsIconBgClass = computed(() => {
+        const mode = this.pomodoroState.mode();
+        if (mode === 'shortBreak') return 'bg-emerald-200 dark:bg-emerald-700/50';
+        if (mode === 'longBreak') return 'bg-sky-200 dark:bg-sky-700/50';
+        return 'bg-amber-200 dark:bg-amber-700/50';
+    });
+
     readonly pomodoroTabClass = computed(() =>
         this.activeSection() === 'pomodoro'
-            ? `${this.tabBase} bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-200 ring-2 ring-orange-200 dark:ring-orange-800`
+            ? `${this.tabBase} ${this.pomodoroActiveColors()}`
             : `${this.tabBase} text-stone-500 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800 hover:text-orange-600 dark:hover:text-orange-300`,
     );
 

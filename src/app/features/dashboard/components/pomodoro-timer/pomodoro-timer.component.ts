@@ -3,6 +3,7 @@ import { NgpButton } from 'ng-primitives/button';
 import { LucideAngularModule, Play, Pause, RotateCcw, Coffee, Brain, Sofa, Coins, Pencil } from 'lucide-angular';
 import { interval, Subscription } from 'rxjs';
 import { UserService } from '../../../../core/services/user.service';
+import { PomodoroStateService } from '../../../../core/services/pomodoro-state.service';
 
 export type PomodoroMode = 'focus' | 'shortBreak' | 'longBreak';
 
@@ -26,7 +27,7 @@ export class PomodoroTimerComponent implements OnDestroy {
     private readonly userService = inject(UserService);
     private readonly elRef = inject(ElementRef);
 
-    readonly mode = signal<PomodoroMode>('focus');
+    readonly mode = inject(PomodoroStateService).mode;
     readonly customDurations: ReturnType<typeof signal<Record<PomodoroMode, number>>>;
     readonly timeLeft: ReturnType<typeof signal<number>>;
     readonly isRunning = signal(false);

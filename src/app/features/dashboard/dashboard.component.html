@@ -46,13 +46,14 @@
         <div class="flex items-center justify-end gap-2 sm:gap-3 min-w-0">
             <!-- Chips badge: Solo icono en móvil, completo en desktop -->
             <div
-                class="flex items-center gap-2 px-2 py-1.5 sm:px-3 rounded-full shadow-sm bg-amber-100/60 dark:bg-amber-900/40 border border-amber-200 dark:border-amber-700/50 hover:scale-105 transition-transform cursor-help"
+                class="flex items-center gap-2 px-2 py-1.5 sm:px-3 rounded-full shadow-sm border hover:scale-105 transition-all duration-500 cursor-help"
+                [class]="chipsBadgeClass()"
                 title="Tus fichas ganadas"
             >
-                <div class="p-1 bg-amber-200 dark:bg-amber-700/50 rounded-full">
-                    <lucide-angular [img]="Coins" [size]="14" strokeWidth="2.5" class="text-amber-700 dark:text-amber-200" />
+                <div class="p-1 rounded-full transition-colors duration-500" [class]="chipsIconBgClass()">
+                    <lucide-angular [img]="Coins" [size]="14" strokeWidth="2.5" />
                 </div>
-                <span class="text-sm font-extrabold text-amber-700 dark:text-amber-200 pr-1">
+                <span class="text-sm font-extrabold pr-1">
                     {{ userService.chips() }}
                 </span>
             </div>

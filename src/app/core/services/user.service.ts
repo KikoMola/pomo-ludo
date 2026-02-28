@@ -83,7 +83,7 @@ export class UserService {
         const currentName = this.name();
         if (!currentName) return;
         const profiles = this.readProfiles();
-        profiles[currentName] = { chips: this.chips(), theme: this.theme() };
+        profiles[currentName] = { ...profiles[currentName], chips: this.chips(), theme: this.theme() };
         localStorage.setItem(PROFILES_KEY, JSON.stringify(profiles));
     }
 

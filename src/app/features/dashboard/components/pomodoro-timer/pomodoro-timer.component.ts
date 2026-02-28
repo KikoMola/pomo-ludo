@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, OnDestroy, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, ElementRef, inject, OnDestroy, signal } from '@angular/core';
 import { NgpButton } from 'ng-primitives/button';
 import { LucideAngularModule, Play, Pause, RotateCcw, Coffee, Brain, Sofa, Coins, Pencil } from 'lucide-angular';
 import { interval, Subscription } from 'rxjs';
@@ -27,14 +27,32 @@ export class PomodoroTimerComponent implements OnDestroy {
     private readonly elRef = inject(ElementRef);
 
     readonly mode = signal<PomodoroMode>('focus');
-    readonly customDurations = signal<Record<PomodoroMode, number>>({ ...DEFAULT_DURATIONS });
-    readonly timeLeft = signal<number>(DEFAULT_DURATIONS['focus']);
+    readonly customDurations: ReturnType<typeof signal<Record<PomodoroMode, number>>>;
+    readonly timeLeft: ReturnType<typeof signal<number>>;
     readonly isRunning = signal(false);
     readonly sessionsCompleted = signal(0);
     readonly isEditing = signal(false);
     readonly editMinutes = signal(25);
+    readonly editSeconds = signal(0);
 
     private timerSub?: Subscription;
+    private minWheelListener?: (e: WheelEvent) => void;
+    private secWheelListener?: (e: WheelEvent) => void;
+
+    constructor() {
+        const saved = this.userService.getPomodoroDurations();
+        const initialDurations: Record<PomodoroMode, number> = {
+            focus: saved?.['focus'] ?? DEFAULT_DURATIONS.focus,
+            shortBreak: saved?.['shortBreak'] ?? DEFAULT_DURATIONS.shortBreak,
+            longBreak: saved?.['longBreak'] ?? DEFAULT_DURATIONS.longBreak,
+        };
+        this.customDurations = signal(initialDurations);
+        this.timeLeft = signal(initialDurations.focus);
+
+        effect(() => {
+            this.userService.savePomodoroDurations(this.customDurations());
+        });
+    }
 
     // Exposed constants for the template
     readonly RING_RADIUS = RING_RADIUS;
@@ -74,6 +92,12 @@ export class PomodoroTimerComponent implements OnDestroy {
         return 'text-sky-100 dark:text-sky-900/20';
     });
 
+    readonly sessionDotFilledClass = computed(() => {
+        if (this.mode() === 'focus') return 'bg-orange-400 dark:bg-orange-500';
+        if (this.mode() === 'shortBreak') return 'bg-emerald-400 dark:bg-emerald-500';
+        return 'bg-sky-400 dark:bg-sky-500';
+    });
+
     readonly sessionDots = computed(() =>
         Array.from(
             { length: SESSIONS_BEFORE_LONG_BREAK },
@@ -103,43 +127,88 @@ export class PomodoroTimerComponent implements OnDestroy {
 
     setMode(mode: PomodoroMode): void {
         this.pause();
-        this.isEditing.set(false);
+        this.cancelEdit();
         this.mode.set(mode);
         this.timeLeft.set(this.customDurations()[mode]);
     }
 
     reset(): void {
         this.pause();
-        this.isEditing.set(false);
+        this.cancelEdit();
         this.timeLeft.set(this.customDurations()[this.mode()]);
     }
 
     startEdit(): void {
         if (this.isRunning()) return;
-        this.editMinutes.set(Math.round(this.customDurations()[this.mode()] / 60));
+        const total = this.customDurations()[this.mode()];
+        this.editMinutes.set(Math.floor(total / 60));
+        this.editSeconds.set(total % 60);
         this.isEditing.set(true);
         setTimeout(() => {
-            const input = this.elRef.nativeElement.querySelector('[data-edit-input]') as HTMLInputElement;
-            input?.focus();
-            input?.select();
+            const minInput = this.elRef.nativeElement.querySelector('[data-edit-minutes]') as HTMLInputElement;
+            const secInput = this.elRef.nativeElement.querySelector('[data-edit-seconds]') as HTMLInputElement;
+            minInput?.focus();
+            minInput?.select();
+
+            this.minWheelListener = (e: WheelEvent) => {
+                e.preventDefault();
+                const delta = e.deltaY < 0 ? 1 : -1;
+                this.editMinutes.set(Math.max(0, Math.min(99, this.editMinutes() + delta)));
+            };
+            this.secWheelListener = (e: WheelEvent) => {
+                e.preventDefault();
+                const delta = e.deltaY < 0 ? 1 : -1;
+                const next = this.editSeconds() + delta;
+                if (next < 0) {
+                    this.editSeconds.set(59);
+                    this.editMinutes.update(m => Math.max(0, m - 1));
+                } else if (next > 59) {
+                    this.editSeconds.set(0);
+                    this.editMinutes.update(m => Math.min(99, m + 1));
+                } else {
+                    this.editSeconds.set(next);
+                }
+            };
+            minInput?.addEventListener('wheel', this.minWheelListener, { passive: false });
+            secInput?.addEventListener('wheel', this.secWheelListener, { passive: false });
         });
     }
 
-    confirmEditFromEvent(event: Event): void {
+    onMinutesInput(event: Event): void {
         const value = +(event.target as HTMLInputElement).value;
-        this.confirmEdit(value);
+        this.editMinutes.set(Math.max(0, Math.min(99, value || 0)));
     }
 
-    confirmEdit(minutes: number): void {
+    onSecondsInput(event: Event): void {
+        const value = +(event.target as HTMLInputElement).value;
+        this.editSeconds.set(Math.max(0, Math.min(59, value || 0)));
+    }
+
+    confirmEdit(): void {
         if (!this.isEditing()) return;
-        const clamped = Math.max(1, Math.min(99, minutes || 1));
-        this.customDurations.update(d => ({ ...d, [this.mode()]: clamped * 60 }));
-        this.timeLeft.set(clamped * 60);
+        this.removeWheelListeners();
+        const totalSeconds = Math.max(1, this.editMinutes() * 60 + this.editSeconds());
+        this.customDurations.update(d => ({ ...d, [this.mode()]: totalSeconds }));
+        this.timeLeft.set(totalSeconds);
         this.isEditing.set(false);
     }
 
     cancelEdit(): void {
+        this.removeWheelListeners();
         this.isEditing.set(false);
+    }
+
+    private removeWheelListeners(): void {
+        const minInput = this.elRef.nativeElement.querySelector('[data-edit-minutes]') as HTMLInputElement;
+        const secInput = this.elRef.nativeElement.querySelector('[data-edit-seconds]') as HTMLInputElement;
+        if (this.minWheelListener) {
+            minInput?.removeEventListener('wheel', this.minWheelListener);
+            this.minWheelListener = undefined;
+        }
+        if (this.secWheelListener) {
+            secInput?.removeEventListener('wheel', this.secWheelListener);
+            this.secWheelListener = undefined;
+        }
     }
 
     private start(): void {
@@ -179,5 +248,6 @@ export class PomodoroTimerComponent implements OnDestroy {
 
     ngOnDestroy(): void {
         this.timerSub?.unsubscribe();
+        this.removeWheelListeners();
     }
 }

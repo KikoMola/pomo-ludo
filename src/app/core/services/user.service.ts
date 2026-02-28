@@ -5,6 +5,7 @@ export type Theme = 'dark' | 'light';
 interface UserProfile {
     chips: number;
     theme: Theme;
+    pomodoroDurations?: Record<string, number>;
 }
 
 type ProfilesMap = Record<string, UserProfile>;
@@ -59,6 +60,20 @@ export class UserService {
         localStorage.removeItem(CURRENT_USER_KEY);
     }
 
+    getPomodoroDurations(): Record<string, number> | undefined {
+        const currentName = this.name();
+        if (!currentName) return undefined;
+        return this.loadProfile(currentName).pomodoroDurations;
+    }
+
+    savePomodoroDurations(durations: Record<string, number>): void {
+        const currentName = this.name();
+        if (!currentName) return;
+        const profiles = this.readProfiles();
+        profiles[currentName] = { ...profiles[currentName]!, pomodoroDurations: durations };
+        localStorage.setItem(PROFILES_KEY, JSON.stringify(profiles));
+    }
+
     private loadProfile(name: string): UserProfile {
         const profiles = this.readProfiles();
         return profiles[name] ?? { chips: 0, theme: this.systemTheme() };
@@ -68,7 +83,7 @@ export class UserService {
         const currentName = this.name();
         if (!currentName) return;
         const profiles = this.readProfiles();
-        profiles[currentName] = { chips: this.chips(), theme: this.theme() };
+        profiles[currentName] = { ...profiles[currentName], chips: this.chips(), theme: this.theme() };
         localStorage.setItem(PROFILES_KEY, JSON.stringify(profiles));
     }
 

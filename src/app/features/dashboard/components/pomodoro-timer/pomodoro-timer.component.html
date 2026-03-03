@@ -221,6 +221,27 @@
 
             <button
                 ngpButton
+                (click)="toggleMute()"
+                [attr.aria-label]="isMuted() ? 'Activar sonido' : 'Silenciar sonido'"
+                [attr.aria-pressed]="isMuted()"
+                class="p-3.5 rounded-2xl cursor-pointer transition-all duration-200 active:scale-90 shrink-0 bg-stone-100 dark:bg-stone-900/60 border border-stone-200 dark:border-stone-700 hover:border-stone-300"
+                [class.text-stone-300]="isMuted()"
+                [class.dark:text-stone-600]="isMuted()"
+                [class.text-stone-400]="!isMuted()"
+                [class.dark:text-stone-500]="!isMuted()"
+                [class.hover:text-stone-400]="isMuted()"
+                [class.hover:text-stone-600]="!isMuted()"
+                [class.dark:hover:text-stone-300]="!isMuted()"
+            >
+                @if (isMuted()) {
+                    <lucide-angular [img]="VolumeX" [size]="20" strokeWidth="2.5" />
+                } @else {
+                    <lucide-angular [img]="Volume2" [size]="20" strokeWidth="2.5" />
+                }
+            </button>
+
+            <button
+                ngpButton
                 (click)="toggle()"
                 [attr.aria-label]="isRunning() ? 'Pausar temporizador' : 'Iniciar temporizador'"
                 class="flex-1 flex items-center justify-center gap-2.5 py-3.5 rounded-2xl font-bold text-sm cursor-pointer text-white transition-all duration-200 active:scale-95 shadow-lg focus-visible:ring-2 focus-visible:ring-offset-2"

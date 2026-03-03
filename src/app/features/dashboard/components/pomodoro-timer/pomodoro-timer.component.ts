@@ -1,9 +1,10 @@
 import { ChangeDetectionStrategy, Component, computed, effect, ElementRef, inject, OnDestroy, signal } from '@angular/core';
 import { NgpButton } from 'ng-primitives/button';
-import { LucideAngularModule, Play, Pause, RotateCcw, Coffee, Brain, Sofa, Coins, Pencil } from 'lucide-angular';
+import { LucideAngularModule, Play, Pause, RotateCcw, Coffee, Brain, Sofa, Coins, Pencil, Volume2, VolumeX } from 'lucide-angular';
 import { interval, Subscription } from 'rxjs';
 import { UserService } from '../../../../core/services/user.service';
 import { PomodoroStateService } from '../../../../core/services/pomodoro-state.service';
+import { SoundService } from '../../../../core/services/sound.service';
 
 export type PomodoroMode = 'focus' | 'shortBreak' | 'longBreak';
 
@@ -26,8 +27,10 @@ const CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS;
 export class PomodoroTimerComponent implements OnDestroy {
     private readonly userService = inject(UserService);
     private readonly elRef = inject(ElementRef);
+    private readonly soundService = inject(SoundService);
 
     readonly mode = inject(PomodoroStateService).mode;
+    readonly isMuted = this.soundService.isMuted;
     readonly customDurations: ReturnType<typeof signal<Record<PomodoroMode, number>>>;
     readonly timeLeft: ReturnType<typeof signal<number>>;
     readonly isRunning = signal(false);
@@ -117,6 +120,12 @@ export class PomodoroTimerComponent implements OnDestroy {
     readonly Sofa = Sofa;
     readonly Coins = Coins;
     readonly Pencil = Pencil;
+    readonly Volume2 = Volume2;
+    readonly VolumeX = VolumeX;
+
+    toggleMute(): void {
+        this.soundService.toggleMute();
+    }
 
     toggle(): void {
         if (this.isRunning()) {
@@ -233,6 +242,7 @@ export class PomodoroTimerComponent implements OnDestroy {
     private complete(): void {
         this.pause();
         this.timeLeft.set(0);
+        this.soundService.playTimerEnd(this.mode());
 
         if (this.mode() === 'focus') {
             this.sessionsCompleted.update(s => s + 1);
